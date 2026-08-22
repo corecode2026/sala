@@ -411,6 +411,107 @@ function addOrderRecord(order, onError) {
     });
   }
 }
+const PALESTINE_LOCALITIES = [
+  { name: "\u062C\u0646\u064A\u0646", lat: 32.4618, lng: 35.3007 },
+  { name: "\u064A\u0639\u0628\u062F", lat: 32.4453, lng: 35.1699 },
+  { name: "\u0642\u0628\u0627\u0637\u064A\u0629", lat: 32.4103, lng: 35.2899 },
+  { name: "\u0639\u0631\u0627\u0628\u0629", lat: 32.386, lng: 35.3364 },
+  { name: "\u0643\u0641\u0631 \u0631\u0627\u0639\u064A", lat: 32.4193, lng: 35.1957 },
+  { name: "\u0633\u064A\u0644\u0629 \u0627\u0644\u0638\u0647\u0631", lat: 32.3898, lng: 35.2394 },
+  { name: "\u0633\u064A\u0644\u0629 \u0627\u0644\u062D\u0627\u0631\u062B\u064A\u0629", lat: 32.4519, lng: 35.2333 },
+  { name: "\u062F\u064A\u0631 \u0623\u0628\u0648 \u0636\u0639\u064A\u0641", lat: 32.4306, lng: 35.2467 },
+  { name: "\u062C\u0644\u0642\u0645\u0648\u0633", lat: 32.3853, lng: 35.3728 },
+  { name: "\u0639\u0646\u064A\u0646", lat: 32.4489, lng: 35.1094 },
+  { name: "\u0632\u0628\u0648\u0628\u0627", lat: 32.4444, lng: 35.0819 },
+  { name: "\u0641\u0642\u0648\u0639\u0629", lat: 32.4256, lng: 35.3931 },
+  { name: "\u0645\u064A\u062B\u0644\u0648\u0646", lat: 32.4144, lng: 35.2606 },
+  { name: "\u0628\u0631\u0642\u064A\u0646", lat: 32.4478, lng: 35.2497 },
+  { name: "\u0627\u0644\u062C\u0644\u0645\u0629", lat: 32.5119, lng: 35.2469 },
+  { name: "\u0633\u064A\u0631", lat: 32.4783, lng: 35.2589 },
+  { name: "\u0631\u0645\u0627\u0646\u0629", lat: 32.4319, lng: 35.1358 },
+  { name: "\u0639\u062C\u0629", lat: 32.4644, lng: 35.2683 },
+  { name: "\u0643\u0641\u0631 \u062F\u0627\u0646", lat: 32.4767, lng: 35.2653 },
+  { name: "\u0627\u0644\u0632\u0628\u0627\u0628\u062F\u0629", lat: 32.4108, lng: 35.3444 },
+  { name: "\u0628\u0631\u0637\u0639\u0629", lat: 32.4211, lng: 35.1417 },
+  { name: "\u0637\u0648\u0628\u0627\u0633", lat: 32.3211, lng: 35.3708 },
+  { name: "\u0637\u0645\u0648\u0646", lat: 32.3336, lng: 35.3908 },
+  { name: "\u0639\u0642\u0627\u0628\u0627", lat: 32.3608, lng: 35.4406 },
+  { name: "\u062A\u064A\u0627\u0633\u064A\u0631", lat: 32.3467, lng: 35.4108 },
+  { name: "\u0627\u0644\u0641\u0627\u0631\u0639\u0629", lat: 32.2969, lng: 35.4331 },
+  { name: "\u0637\u0648\u0644\u0643\u0631\u0645", lat: 32.3106, lng: 35.0286 },
+  { name: "\u0639\u0646\u0628\u062A\u0627", lat: 32.3103, lng: 35.1211 },
+  { name: "\u0628\u0644\u0639\u0627", lat: 32.2967, lng: 35.0533 },
+  { name: "\u062F\u064A\u0631 \u0627\u0644\u063A\u0635\u0648\u0646", lat: 32.3494, lng: 35.0428 },
+  { name: "\u0639\u0644\u0627\u0631", lat: 32.3272, lng: 35.0439 },
+  { name: "\u0643\u0641\u0631 \u0627\u0644\u0644\u0628\u062F", lat: 32.3389, lng: 35.0625 },
+  { name: "\u0634\u0648\u064A\u0643\u0629", lat: 32.3253, lng: 35.0192 },
+  { name: "\u0641\u0631\u0639\u0648\u0646", lat: 32.2944, lng: 35.0069 },
+  { name: "\u0632\u064A\u062A\u0627", lat: 32.3597, lng: 35.0225 },
+  { name: "\u0639\u062A\u064A\u0644", lat: 32.3428, lng: 35.0369 },
+  { name: "\u0635\u064A\u062F\u0627", lat: 32.3661, lng: 35.1222 },
+  { name: "\u0628\u0627\u0642\u0629 \u0627\u0644\u0634\u0631\u0642\u064A\u0629", lat: 32.34, lng: 35.0642 },
+  { name: "\u0642\u0644\u0642\u064A\u0644\u064A\u0629", lat: 32.1897, lng: 34.9708 },
+  { name: "\u0639\u0632\u0648\u0646", lat: 32.1281, lng: 35.0511 },
+  { name: "\u062C\u064A\u0648\u0633", lat: 32.2261, lng: 35.0292 },
+  { name: "\u062D\u062C\u0629", lat: 32.2469, lng: 35.0331 },
+  { name: "\u0643\u0641\u0631 \u062B\u0644\u062B", lat: 32.1839, lng: 35.0397 },
+  { name: "\u062D\u0628\u0644\u0629", lat: 32.1425, lng: 34.9903 },
+  { name: "\u062C\u0646\u0635\u0627\u0641\u0648\u0637", lat: 32.1994, lng: 35.0664 },
+  { name: "\u0639\u0632\u0628\u0629 \u0627\u0644\u0637\u0628\u064A\u0628", lat: 32.1656, lng: 34.9967 },
+  { name: "\u0631\u0623\u0633 \u0639\u0637\u064A\u0629", lat: 32.1622, lng: 34.9822 },
+  { name: "\u0633\u0644\u0641\u064A\u062A", lat: 32.0839, lng: 35.1794 },
+  { name: "\u062F\u064A\u0631 \u0627\u0633\u062A\u064A\u0627", lat: 32.1147, lng: 35.1417 },
+  { name: "\u0628\u0631\u0648\u0642\u064A\u0646", lat: 32.0731, lng: 35.1131 },
+  { name: "\u0643\u0641\u0631 \u0627\u0644\u062F\u064A\u0643", lat: 32.0836, lng: 35.0983 },
+  { name: "\u0632\u064A\u062A\u0627 \u062C\u0645\u0627\u0639\u064A\u0646", lat: 32.1417, lng: 35.175 },
+  { name: "\u064A\u0627\u0633\u0648\u0641", lat: 32.155, lng: 35.19 },
+  { name: "\u0625\u0633\u0643\u0627\u0643\u0627", lat: 32.1417, lng: 35.2 },
+  { name: "\u0645\u0631\u062F\u0629", lat: 32.1553, lng: 35.1975 },
+  { name: "\u0642\u0631\u0627\u0648\u0629 \u0628\u0646\u064A \u062D\u0633\u0627\u0646", lat: 32.145, lng: 35.155 },
+  { name: "\u062D\u0627\u0631\u0633", lat: 32.1478, lng: 35.16 },
+  { name: "\u0642\u064A\u0631\u0629", lat: 32.1417, lng: 35.17 },
+  { name: "\u0646\u0627\u0628\u0644\u0633", lat: 32.2211, lng: 35.2544 },
+  { name: "\u062D\u0648\u0627\u0631\u0629", lat: 32.1417, lng: 35.2597 },
+  { name: "\u0628\u064A\u062A\u0627", lat: 32.1667, lng: 35.2597 },
+  { name: "\u0639\u0648\u0631\u062A\u0627", lat: 32.1958, lng: 35.2919 },
+  { name: "\u0639\u0642\u0631\u0628\u0627", lat: 32.1214, lng: 35.3419 },
+  { name: "\u0639\u0635\u064A\u0631\u0629 \u0627\u0644\u0634\u0645\u0627\u0644\u064A\u0629", lat: 32.2739, lng: 35.2842 },
+  { name: "\u0639\u0635\u064A\u0631\u0629 \u0627\u0644\u0642\u0628\u0644\u064A\u0629", lat: 32.1731, lng: 35.2544 },
+  { name: "\u0628\u064A\u062A \u0641\u0648\u0631\u064A\u0643", lat: 32.2264, lng: 35.3131 },
+  { name: "\u0633\u0627\u0644\u0645", lat: 32.2411, lng: 35.3253 },
+  { name: "\u0631\u0627\u0645 \u0627\u0644\u0644\u0647", lat: 31.9038, lng: 35.2034 },
+  { name: "\u0627\u0644\u0628\u064A\u0631\u0629", lat: 31.9089, lng: 35.2144 },
+  { name: "\u0628\u064A\u062A\u0648\u0646\u064A\u0627", lat: 31.9075, lng: 35.1758 },
+  { name: "\u0633\u0644\u0648\u0627\u062F", lat: 31.9861, lng: 35.2833 },
+  { name: "\u0637\u0631\u0645\u0633\u0639\u064A\u0627", lat: 31.9931, lng: 35.2969 },
+  { name: "\u0627\u0644\u0637\u064A\u0628\u0629", lat: 32.0244, lng: 35.3603 },
+  { name: "\u0623\u0631\u064A\u062D\u0627", lat: 31.8667, lng: 35.45 },
+  { name: "\u0627\u0644\u0642\u062F\u0633", lat: 31.7683, lng: 35.2137 },
+  { name: "\u0623\u0628\u0648 \u062F\u064A\u0633", lat: 31.7639, lng: 35.2661 },
+  { name: "\u0628\u064A\u062A \u0644\u062D\u0645", lat: 31.7054, lng: 35.2024 },
+  { name: "\u0628\u064A\u062A \u062C\u0627\u0644\u0627", lat: 31.7186, lng: 35.1839 },
+  { name: "\u0628\u064A\u062A \u0633\u0627\u062D\u0648\u0631", lat: 31.7047, lng: 35.2211 },
+  { name: "\u0627\u0644\u062E\u0644\u064A\u0644", lat: 31.5326, lng: 35.0998 },
+  { name: "\u064A\u0637\u0627", lat: 31.4453, lng: 35.0956 },
+  { name: "\u062F\u0648\u0631\u0627", lat: 31.5147, lng: 35.0292 },
+  { name: "\u062D\u0644\u062D\u0648\u0644", lat: 31.5731, lng: 35.0956 },
+  { name: "\u0628\u0646\u064A \u0646\u0639\u064A\u0645", lat: 31.5411, lng: 35.1622 },
+  { name: "\u0625\u0630\u0646\u0627", lat: 31.5764, lng: 34.975 },
+  { name: "\u0628\u064A\u062A \u0623\u0645\u0631", lat: 31.6172, lng: 35.1044 },
+  { name: "\u0633\u0639\u064A\u0631", lat: 31.585, lng: 35.1206 },
+  { name: "\u063A\u0632\u0629", lat: 31.5017, lng: 34.4668 },
+  { name: "\u062C\u0628\u0627\u0644\u064A\u0627", lat: 31.5281, lng: 34.4839 },
+  { name: "\u0628\u064A\u062A \u0644\u0627\u0647\u064A\u0627", lat: 31.5478, lng: 34.4917 },
+  { name: "\u0628\u064A\u062A \u062D\u0627\u0646\u0648\u0646", lat: 31.5389, lng: 34.5364 },
+  { name: "\u062F\u064A\u0631 \u0627\u0644\u0628\u0644\u062D", lat: 31.4189, lng: 34.3503 },
+  { name: "\u062E\u0627\u0646 \u064A\u0648\u0646\u0633", lat: 31.3469, lng: 34.3061 },
+  { name: "\u0631\u0641\u062D", lat: 31.2989, lng: 34.2453 },
+  { name: "\u062D\u0648\u0633\u0627\u0646", lat: 31.6922, lng: 35.1394 },
+  { name: "\u0646\u062D\u0627\u0644\u064A\u0646", lat: 31.6789, lng: 35.1108 },
+  { name: "\u0627\u0644\u062E\u0636\u0631", lat: 31.6828, lng: 35.1653 },
+  { name: "\u062A\u0642\u0648\u0639", lat: 31.6428, lng: 35.2394 },
+  { name: "\u0627\u0644\u0639\u0628\u064A\u062F\u064A\u0629", lat: 31.6931, lng: 35.2261 }
+];
 const DEFAULT_SETTINGS = {
   deliveryFee: 15,
   storeLat: 32.2211,
@@ -839,6 +940,39 @@ function CheckoutStep1({ form, setForm, next }) {
   const valid = form.name.trim().length > 1 && form.phone.trim().length >= 8;
   return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0645\u0639\u0644\u0648\u0645\u0627\u062A \u0627\u0644\u0632\u0628\u0648\u0646"), /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, placeholder: "\u0645\u062B\u0627\u0644: \u0645\u062D\u0645\u062F \u0623\u062D\u0645\u062F", value: form.name, onChange: (e) => setForm({ ...form, name: e.target.value }) })), /* @__PURE__ */ React.createElement(Field, { label: "\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062A\u0641" }, /* @__PURE__ */ React.createElement("div", { className: "flex gap-2" }, /* @__PURE__ */ React.createElement("select", { className: inputClass, style: { ...inputStyle, width: 100, flexShrink: 0 }, value: form.code, onChange: (e) => setForm({ ...form, code: e.target.value }) }, /* @__PURE__ */ React.createElement("option", { value: "+970" }, "\u200E+970"), /* @__PURE__ */ React.createElement("option", { value: "+972" }, "\u200E+972")), /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, placeholder: "59XXXXXXX", value: form.phone, onChange: (e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "") }) }))), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, size: "lg", disabled: !valid, onClick: next }, "\u0645\u062A\u0627\u0628\u0639\u0629"));
 }
+function CitySearchSelect({ value, onChangeText, onSelectLocality }) {
+  const [open, setOpen] = useState(false);
+  const query = value || "";
+  const matches = query.trim().length > 0 ? PALESTINE_LOCALITIES.filter((l) => l.name.includes(query.trim())).slice(0, 8) : [];
+  return /* @__PURE__ */ React.createElement("div", { className: "relative" }, /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      className: inputClass,
+      style: inputStyle,
+      value: query,
+      onChange: (e) => {
+        onChangeText(e.target.value);
+        setOpen(true);
+      },
+      onFocus: () => setOpen(true),
+      onBlur: () => setTimeout(() => setOpen(false), 150),
+      placeholder: "\u0627\u0628\u062D\u062B \u0639\u0646 \u0645\u062F\u064A\u0646\u062A\u0643 \u0623\u0648 \u0642\u0631\u064A\u062A\u0643..."
+    }
+  ), open && matches.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "absolute z-20 w-full mt-1 rounded-xl overflow-hidden shadow-lg max-h-56 overflow-y-auto", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, matches.map((m) => /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      key: m.name,
+      type: "button",
+      onMouseDown: () => {
+        onSelectLocality(m);
+        setOpen(false);
+      },
+      className: "w-full text-right px-3 py-2 text-sm hover:brightness-95",
+      style: { borderBottom: `1px solid ${C.borderSoft}` }
+    },
+    m.name
+  ))));
+}
 function LocationPicker({ location, setLocation, onAvailability }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
@@ -890,6 +1024,14 @@ function LocationPicker({ location, setLocation, onAvailability }) {
     markerRef.current = marker;
     setTimeout(() => map.invalidateSize(), 200);
   }, [leafletReady]);
+  useEffect(() => {
+    if (!leafletReady || !mapInstance.current || !markerRef.current || !location) return;
+    const current = markerRef.current.getLatLng();
+    if (Math.abs(current.lat - location.lat) > 5e-4 || Math.abs(current.lng - location.lng) > 5e-4) {
+      markerRef.current.setLatLng([location.lat, location.lng]);
+      mapInstance.current.setView([location.lat, location.lng], 14);
+    }
+  }, [location, leafletReady]);
   const useMyLocation = () => {
     setLocateError("");
     if (typeof navigator === "undefined" || !navigator.geolocation) {
@@ -921,7 +1063,14 @@ function LocationPicker({ location, setLocation, onAvailability }) {
 function CheckoutStep3({ addr, setAddr, next, back }) {
   const [mapAvailable, setMapAvailable] = useState(true);
   const valid = addr.city && addr.area && addr.street && addr.building && (addr.location || !mapAvailable);
-  return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u062A\u0648\u0635\u064A\u0644"), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 gap-3" }, /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0645\u062F\u064A\u0646\u0629" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, value: addr.city, onChange: (e) => setAddr({ ...addr, city: e.target.value }), placeholder: "\u0646\u0627\u0628\u0644\u0633" })), /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0645\u0646\u0637\u0642\u0629" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, value: addr.area, onChange: (e) => setAddr({ ...addr, area: e.target.value }), placeholder: "\u0631\u0641\u064A\u062F\u064A\u0627" }))), /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0634\u0627\u0631\u0639" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, value: addr.street, onChange: (e) => setAddr({ ...addr, street: e.target.value }), placeholder: "\u0627\u0633\u0645 \u0627\u0644\u0634\u0627\u0631\u0639" })), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-3 gap-3" }, /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0645\u0628\u0646\u0649" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, value: addr.building, onChange: (e) => setAddr({ ...addr, building: e.target.value }) })), /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0637\u0627\u0628\u0642" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, value: addr.floor, onChange: (e) => setAddr({ ...addr, floor: e.target.value }) })), /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0634\u0642\u0629" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, value: addr.apt, onChange: (e) => setAddr({ ...addr, apt: e.target.value }) }))), /* @__PURE__ */ React.createElement(Field, { label: "\u062A\u0641\u0627\u0635\u064A\u0644 \u0625\u0636\u0627\u0641\u064A\u0629" }, /* @__PURE__ */ React.createElement("textarea", { rows: 2, className: inputClass, style: inputStyle, value: addr.details, onChange: (e) => setAddr({ ...addr, details: e.target.value }), placeholder: "\u0623\u0642\u0631\u0628 \u0645\u0639\u0644\u0645\u060C \u0644\u0648\u0646 \u0627\u0644\u0628\u0646\u0627\u064A\u0629..." })), /* @__PURE__ */ React.createElement(LocationPicker, { location: addr.location, setLocation: (loc) => setAddr({ ...addr, location: loc }), onAvailability: setMapAvailable }), /* @__PURE__ */ React.createElement(Field, { label: "\u0645\u0644\u0627\u062D\u0638\u0627\u062A \u0644\u0644\u0633\u0627\u0626\u0642" }, /* @__PURE__ */ React.createElement("textarea", { rows: 2, className: inputClass, style: inputStyle, value: addr.notes, onChange: (e) => setAddr({ ...addr, notes: e.target.value }), placeholder: "\u0627\u062E\u062A\u064A\u0627\u0631\u064A" })), /* @__PURE__ */ React.createElement("label", { className: "flex items-center gap-2 mb-5 text-sm font-bold cursor-pointer" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: addr.save, onChange: (e) => setAddr({ ...addr, save: e.target.checked }), className: "w-4 h-4" }), "\u062D\u0641\u0638 \u0647\u0630\u0627 \u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0644\u0637\u0644\u0628\u0627\u062A \u0642\u0627\u062F\u0645\u0629"), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3" }, /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, onClick: back }, "\u0631\u062C\u0648\u0639"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, disabled: !valid, onClick: next }, "\u0645\u062A\u0627\u0628\u0639\u0629")));
+  return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u062A\u0648\u0635\u064A\u0644"), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 gap-3" }, /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0645\u062F\u064A\u0646\u0629 / \u0627\u0644\u0642\u0631\u064A\u0629" }, /* @__PURE__ */ React.createElement(
+    CitySearchSelect,
+    {
+      value: addr.city,
+      onChangeText: (v) => setAddr({ ...addr, city: v }),
+      onSelectLocality: (loc) => setAddr({ ...addr, city: loc.name, location: { lat: loc.lat, lng: loc.lng } })
+    }
+  )), /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0645\u0646\u0637\u0642\u0629" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, value: addr.area, onChange: (e) => setAddr({ ...addr, area: e.target.value }), placeholder: "\u0631\u0641\u064A\u062F\u064A\u0627" }))), /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0634\u0627\u0631\u0639" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, value: addr.street, onChange: (e) => setAddr({ ...addr, street: e.target.value }), placeholder: "\u0627\u0633\u0645 \u0627\u0644\u0634\u0627\u0631\u0639" })), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-3 gap-3" }, /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0645\u0628\u0646\u0649" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, value: addr.building, onChange: (e) => setAddr({ ...addr, building: e.target.value }) })), /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0637\u0627\u0628\u0642" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, value: addr.floor, onChange: (e) => setAddr({ ...addr, floor: e.target.value }) })), /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0634\u0642\u0629" }, /* @__PURE__ */ React.createElement("input", { className: inputClass, style: inputStyle, value: addr.apt, onChange: (e) => setAddr({ ...addr, apt: e.target.value }) }))), /* @__PURE__ */ React.createElement(Field, { label: "\u062A\u0641\u0627\u0635\u064A\u0644 \u0625\u0636\u0627\u0641\u064A\u0629" }, /* @__PURE__ */ React.createElement("textarea", { rows: 2, className: inputClass, style: inputStyle, value: addr.details, onChange: (e) => setAddr({ ...addr, details: e.target.value }), placeholder: "\u0623\u0642\u0631\u0628 \u0645\u0639\u0644\u0645\u060C \u0644\u0648\u0646 \u0627\u0644\u0628\u0646\u0627\u064A\u0629..." })), /* @__PURE__ */ React.createElement(LocationPicker, { location: addr.location, setLocation: (loc) => setAddr({ ...addr, location: loc }), onAvailability: setMapAvailable }), /* @__PURE__ */ React.createElement(Field, { label: "\u0645\u0644\u0627\u062D\u0638\u0627\u062A \u0644\u0644\u0633\u0627\u0626\u0642" }, /* @__PURE__ */ React.createElement("textarea", { rows: 2, className: inputClass, style: inputStyle, value: addr.notes, onChange: (e) => setAddr({ ...addr, notes: e.target.value }), placeholder: "\u0627\u062E\u062A\u064A\u0627\u0631\u064A" })), /* @__PURE__ */ React.createElement("label", { className: "flex items-center gap-2 mb-5 text-sm font-bold cursor-pointer" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: addr.save, onChange: (e) => setAddr({ ...addr, save: e.target.checked }), className: "w-4 h-4" }), "\u062D\u0641\u0638 \u0647\u0630\u0627 \u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0644\u0637\u0644\u0628\u0627\u062A \u0642\u0627\u062F\u0645\u0629"), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3" }, /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, onClick: back }, "\u0631\u062C\u0648\u0639"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, disabled: !valid, onClick: next }, "\u0645\u062A\u0627\u0628\u0639\u0629")));
 }
 function CheckoutStep4({ next, back }) {
   return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0637\u0631\u064A\u0642\u0629 \u0627\u0644\u062F\u0641\u0639"), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-5 flex items-center gap-4 mb-6", style: { background: C.primarySoft, border: `2px solid ${C.primary}` } }, /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl flex items-center justify-center shrink-0", style: { width: 52, height: 52, background: C.surface } }, /* @__PURE__ */ React.createElement(Banknote, { size: 24, color: C.primary })), /* @__PURE__ */ React.createElement("div", { className: "flex-1" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, CONTENT.paymentMethodTitle), /* @__PURE__ */ React.createElement("div", { className: "text-xs mt-0.5", style: { color: C.textSoft } }, CONTENT.paymentMethodDesc)), /* @__PURE__ */ React.createElement("div", { className: "rounded-full flex items-center justify-center", style: { width: 24, height: 24, background: C.primary } }, /* @__PURE__ */ React.createElement(Check, { size: 14, color: "#fff", strokeWidth: 3 }))), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3" }, /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, onClick: back }, "\u0631\u062C\u0648\u0639"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, onClick: next }, "\u0645\u062A\u0627\u0628\u0639\u0629")));
