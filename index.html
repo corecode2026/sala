@@ -295,9 +295,13 @@ let CATEGORIES = DEFAULT_CATEGORIES;
 let PRODUCTS = DEFAULT_PRODUCTS;
 function useLiveCollection(collectionName, defaults) {
   const [items, setItems] = useState(defaults);
+  const [ready, setReady] = useState(false);
   useEffect(() => {
     const database2 = getDb();
-    if (!database2) return;
+    if (!database2) {
+      setReady(true);
+      return;
+    }
     const seedFlagRef = database2.collection("meta").doc("seeded_" + collectionName);
     const unsub = database2.collection(collectionName).onSnapshot(async (snap) => {
       if (snap.empty) {
@@ -316,6 +320,7 @@ function useLiveCollection(collectionName, defaults) {
           }
         } catch (e) {
         }
+        setReady(true);
         return;
       }
       const list = snap.docs.map((doc) => {
@@ -329,8 +334,8 @@ function useLiveCollection(collectionName, defaults) {
         });
       }).catch(() => {
       });
-    }, () => {
-    });
+      setReady(true);
+    }, () => setReady(true));
     return () => unsub();
   }, [collectionName]);
   const database = getDb();
@@ -356,7 +361,7 @@ function useLiveCollection(collectionName, defaults) {
     setItems((list) => list.filter((x) => x.id !== id));
     return Promise.resolve();
   };
-  return [items, { add, update, remove }];
+  return [items, { add, update, remove }, ready];
 }
 const STATUS_FLOW = ["\u062C\u062F\u064A\u062F", "\u0645\u0624\u0643\u062F", "\u0642\u064A\u062F \u0627\u0644\u062A\u062C\u0647\u064A\u0632", "\u062E\u0631\u062C \u0644\u0644\u062A\u0648\u0635\u064A\u0644", "\u062A\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644"];
 const STATUS_TONE = {
@@ -1141,9 +1146,12 @@ function AccountScreen({ setView, form, setForm, addr, setAddr, showToast }) {
     { icon: Bell, label: "\u0627\u0644\u0625\u0634\u0639\u0627\u0631\u0627\u062A" }
   ].map((item) => /* @__PURE__ */ React.createElement("button", { key: item.label, onClick: item.onClick, className: "smk-focus w-full flex items-center gap-3 p-4 rounded-2xl mb-2.5 text-right hover:brightness-95 transition", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement(item.icon, { size: 18, color: C.textSoft }), /* @__PURE__ */ React.createElement("span", { className: "font-bold text-sm flex-1" }, item.label), /* @__PURE__ */ React.createElement(ChevronLeft, { size: 16, color: C.textFaint }))), /* @__PURE__ */ React.createElement(Btn, { variant: "danger", full: true, icon: LogOut, className: "mt-3" }, "\u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062E\u0631\u0648\u062C"));
 }
+function CatalogLoadingScreen() {
+  return /* @__PURE__ */ React.createElement("div", { className: "min-h-screen flex flex-col items-center justify-center gap-3", style: { background: C.bg } }, /* @__PURE__ */ React.createElement("div", { className: "rounded-full flex items-center justify-center", style: { width: 56, height: 56, border: `2px solid ${C.textFaint}` } }, /* @__PURE__ */ React.createElement(ChevronDown, { size: 22, color: C.textFaint, style: { transform: "rotate(180deg)" } })), /* @__PURE__ */ React.createElement("p", { className: "font-bold text-sm", style: { color: C.textSoft } }, "...\u062C\u0627\u0631\u064A \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0645\u0646\u062A\u062C\u0627\u062A"), /* @__PURE__ */ React.createElement("p", { className: "text-xs", style: { color: C.textFaint } }, "\u064A\u0631\u062C\u0649 \u0627\u0644\u0627\u0646\u062A\u0638\u0627\u0631 \u0642\u0644\u064A\u0644\u0627\u064B."));
+}
 function App() {
-  const [liveCategories, catOps] = useLiveCollection("categories", DEFAULT_CATEGORIES);
-  const [liveProducts, prodOps] = useLiveCollection("products", DEFAULT_PRODUCTS);
+  const [liveCategories, catOps, categoriesReady] = useLiveCollection("categories", DEFAULT_CATEGORIES);
+  const [liveProducts, prodOps, productsReady] = useLiveCollection("products", DEFAULT_PRODUCTS);
   CATEGORIES = liveCategories;
   PRODUCTS = liveProducts;
   const [settings, settingsReady] = useLiveSettings();
@@ -1301,6 +1309,9 @@ function App() {
     setActiveCat(catId || null);
     setView("shop");
   };
+  if (!categoriesReady || !productsReady) {
+    return /* @__PURE__ */ React.createElement("div", { className: "smk-root", dir: "rtl" }, /* @__PURE__ */ React.createElement(GlobalStyle, null), /* @__PURE__ */ React.createElement(CatalogLoadingScreen, null));
+  }
   return /* @__PURE__ */ React.createElement("div", { className: "smk-root min-h-screen flex flex-col", dir: "rtl" }, /* @__PURE__ */ React.createElement(GlobalStyle, null), view !== "checkout" && view !== "success" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(CustomerNavbar, { view, setView, cartCount, setCartOpen, query, setQuery, onSearchFocus: () => {
   }, onNavLink: handleNavLink, activeCat, offersOnly }), /* @__PURE__ */ React.createElement(MobileTopBar, { setView, cartCount, setCartOpen })), /* @__PURE__ */ React.createElement("div", { className: "flex-1 pb-16 md:pb-0" }, view === "home" && /* @__PURE__ */ React.createElement(HomeScreen, { setView, cart, updateQty, addToCart, openProduct, loading, setActiveCat, goShop }), view === "shop" && /* @__PURE__ */ React.createElement(ShopScreen, { cart, updateQty, addToCart, openProduct, activeCat, setActiveCat, query, setQuery, offersOnly, setOffersOnly }), view === "product" && /* @__PURE__ */ React.createElement(ProductDetail, { product: selectedProduct, cart, updateQty, addToCart, back: () => goShop(activeCat), openProduct }), view === "checkout" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "max-w-4xl mx-auto px-4 pt-5" }, /* @__PURE__ */ React.createElement("button", { onClick: () => setView("home"), className: "smk-focus flex items-center gap-1 text-xs font-bold", style: { color: C.textFaint } }, /* @__PURE__ */ React.createElement(ChevronRight, { size: 13 }), "\u0627\u0644\u0639\u0648\u062F\u0629 \u0644\u0644\u0645\u062A\u062C\u0631")), /* @__PURE__ */ React.createElement(CheckoutFlow, { step: checkoutStep, setStep: setCheckoutStep, cart, form, setForm, addr, setAddr, confirm: confirmOrder, settingsReady })), view === "success" && /* @__PURE__ */ React.createElement(OrderSuccessScreen, { order: lastOrder, setView }), view === "orders" && /* @__PURE__ */ React.createElement(OrdersScreen, { orders, setView, goShop }), view === "account" && /* @__PURE__ */ React.createElement(AccountScreen, { setView, form, setForm, addr, setAddr, showToast })), view !== "checkout" && view !== "success" && /* @__PURE__ */ React.createElement(MobileBottomNav, { view, setView, goShop }), /* @__PURE__ */ React.createElement(CartDrawer, { open: cartOpen, onClose: () => setCartOpen(false), cart, updateQty, removeItem, onCheckout: goCheckout, setView, goShop }), mobileSearchOpen && /* @__PURE__ */ React.createElement(SearchOverlay, { query, setQuery, onClose: () => setMobileSearchOpen(false), onPick: (p) => {
     setMobileSearchOpen(false);
