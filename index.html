@@ -1239,6 +1239,15 @@ function App() {
     const phone = `${form.code}${form.phone}`;
     const deliveryFee = computeDeliveryFee(addr.location);
     const distanceKm = addr.location ? haversineKm(addr.location.lat, addr.location.lng, STORE_LAT, STORE_LNG) : null;
+    const items = Object.values(cart).map(({ product, qty }) => ({
+      id: product.id,
+      name: product.name,
+      qty,
+      price: product.price,
+      image: product.image || null,
+      iconName: product.iconName || null,
+      lineTotal: lineTotal(product, qty)
+    }));
     getNextOrderNumber().then((orderId) => {
       const newOrder = {
         id: orderId,
@@ -1252,7 +1261,8 @@ function App() {
         phone,
         address: `${addr.city}${addr.details ? " - " + addr.details : ""}`,
         notes: addr.notes,
-        location: addr.location || null
+        location: addr.location || null,
+        items
       };
       setOrders((o) => [newOrder, ...o]);
       addOrderRecord(newOrder, () => showToast("\u062A\u0639\u0630\u0651\u0631\u062A \u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u0637\u0644\u0628 \u0645\u0639 \u0627\u0644\u062E\u0627\u062F\u0645 \u2014 \u062A\u0623\u0643\u062F \u0645\u0646 \u0625\u0639\u062F\u0627\u062F\u0627\u062A Firebase", "danger"));
