@@ -511,7 +511,17 @@ function Timeline({ status }) {
     return /* @__PURE__ */ React.createElement("div", { key: s, className: "flex gap-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-col items-center" }, /* @__PURE__ */ React.createElement("div", { className: "rounded-full flex items-center justify-center shrink-0", style: { width: 34, height: 34, background: done ? C.primary : C.borderSoft } }, /* @__PURE__ */ React.createElement(Icon2, { size: 16, color: done ? "#fff" : C.textFaint })), i < STATUS_FLOW.length - 1 && /* @__PURE__ */ React.createElement("div", { className: "w-[2px] flex-1 my-1", style: { minHeight: 24, background: i < idx ? C.primary : C.borderSoft } })), /* @__PURE__ */ React.createElement("div", { className: "pb-6" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold text-sm", style: { color: done ? C.text : C.textFaint } }, s)));
   }));
 }
-function AdminSidebar({ view, setView, mobileOpen, setMobileOpen }) {
+function useIsDesktop(breakpoint) {
+  const [isDesktop, setIsDesktop] = useState(() => typeof window !== "undefined" ? window.innerWidth >= breakpoint : true);
+  useEffect(() => {
+    const handler = () => setIsDesktop(window.innerWidth >= breakpoint);
+    window.addEventListener("resize", handler);
+    handler();
+    return () => window.removeEventListener("resize", handler);
+  }, [breakpoint]);
+  return isDesktop;
+}
+function AdminSidebar({ view, setView, mobileOpen, setMobileOpen, isDesktop }) {
   const items = [
     { key: "dashboard", label: "\u0644\u0648\u062D\u0629 \u0627\u0644\u062A\u062D\u0643\u0645", icon: LayoutDashboard },
     { key: "orders", label: "\u0627\u0644\u0637\u0644\u0628\u0627\u062A", icon: ClipboardList },
@@ -522,11 +532,12 @@ function AdminSidebar({ view, setView, mobileOpen, setMobileOpen }) {
     { key: "reports", label: "\u0627\u0644\u062A\u0642\u0627\u0631\u064A\u0631", icon: BarChart3 },
     { key: "settings", label: "\u0627\u0644\u0625\u0639\u062F\u0627\u062F\u0627\u062A", icon: Settings }
   ];
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: `fixed inset-0 z-40 lg:hidden ${mobileOpen ? "" : "pointer-events-none"}` }, /* @__PURE__ */ React.createElement("div", { className: "absolute inset-0 transition-opacity", style: { background: "rgba(0,0,0,0.4)", opacity: mobileOpen ? 1 : 0 }, onClick: () => setMobileOpen(false) })), /* @__PURE__ */ React.createElement(
+  const visible = isDesktop || mobileOpen;
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, !isDesktop && /* @__PURE__ */ React.createElement("div", { className: "z-40", style: { position: "fixed", inset: 0, pointerEvents: mobileOpen ? "auto" : "none" } }, /* @__PURE__ */ React.createElement("div", { className: "transition-opacity", style: { position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", opacity: mobileOpen ? 1 : 0 }, onClick: () => setMobileOpen(false) })), /* @__PURE__ */ React.createElement(
     "aside",
     {
-      className: `fixed lg:sticky top-0 right-0 h-screen z-40 flex flex-col shrink-0 transition-transform duration-300 lg:translate-x-0`,
-      style: { width: 250, maxWidth: "85vw", background: C.primary, transform: mobileOpen ? "translateX(0)" : "translateX(100%)" }
+      className: "z-40 flex flex-col shrink-0 transition-transform duration-300",
+      style: { width: 250, maxWidth: "85vw", background: C.primary, position: "fixed", top: 0, right: 0, height: "100vh", transform: visible ? "translateX(0)" : "translateX(100%)" }
     },
     /* @__PURE__ */ React.createElement("div", { className: "px-5 py-5 flex items-center justify-between" }, /* @__PURE__ */ React.createElement(Logo, { light: true })),
     /* @__PURE__ */ React.createElement("nav", { className: "flex-1 px-3 flex flex-col gap-1 mt-3" }, items.map((it) => {
@@ -549,8 +560,8 @@ function AdminSidebar({ view, setView, mobileOpen, setMobileOpen }) {
     /* @__PURE__ */ React.createElement("div", { className: "px-5 py-5" }, /* @__PURE__ */ React.createElement("button", { className: "smk-focus flex items-center gap-2 text-sm font-bold", style: { color: "rgba(255,255,255,0.55)" } }, /* @__PURE__ */ React.createElement(LogOut, { size: 16 }), " \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062E\u0631\u0648\u062C"))
   ));
 }
-function AdminTopbar({ title, setMobileOpen }) {
-  return /* @__PURE__ */ React.createElement("div", { className: "sticky top-0 z-30 flex items-center justify-between px-5 md:px-8 py-4", style: { background: C.surface, borderBottom: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-3" }, /* @__PURE__ */ React.createElement("button", { className: "lg:hidden", onClick: () => setMobileOpen(true) }, /* @__PURE__ */ React.createElement(Menu, { size: 22 })), /* @__PURE__ */ React.createElement("h1", { className: "smk-display font-bold text-lg" }, title)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(IconBtn, { icon: Bell }), /* @__PURE__ */ React.createElement("div", { className: "rounded-full flex items-center justify-center", style: { width: 36, height: 36, background: C.primarySoft } }, /* @__PURE__ */ React.createElement(User, { size: 17, color: C.primary }))));
+function AdminTopbar({ title, setMobileOpen, isDesktop }) {
+  return /* @__PURE__ */ React.createElement("div", { className: "sticky top-0 z-30 flex items-center justify-between px-5 md:px-8 py-4", style: { background: C.surface, borderBottom: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-3" }, !isDesktop && /* @__PURE__ */ React.createElement("button", { onClick: () => setMobileOpen(true) }, /* @__PURE__ */ React.createElement(Menu, { size: 22 })), /* @__PURE__ */ React.createElement("h1", { className: "smk-display font-bold text-lg" }, title)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(IconBtn, { icon: Bell }), /* @__PURE__ */ React.createElement("div", { className: "rounded-full flex items-center justify-center", style: { width: 36, height: 36, background: C.primarySoft } }, /* @__PURE__ */ React.createElement(User, { size: 17, color: C.primary }))));
 }
 function StatCard({ icon: Icon2, label, value, trend, tone = "default" }) {
   const tones = {
@@ -870,8 +881,9 @@ function AdminPlaceholder({ title, icon: Icon2 }) {
 function AdminApp({ orders, changeStatus, products, productOps, categories, categoryOps, showToast }) {
   const [view, setView] = useState("dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isDesktop = useIsDesktop(1024);
   const titles = { dashboard: "\u0644\u0648\u062D\u0629 \u0627\u0644\u062A\u062D\u0643\u0645", orders: "\u0627\u0644\u0637\u0644\u0628\u0627\u062A", products: "\u0627\u0644\u0645\u0646\u062A\u062C\u0627\u062A", categories: "\u0627\u0644\u062A\u0635\u0646\u064A\u0641\u0627\u062A", inventory: "\u0627\u0644\u0645\u062E\u0632\u0648\u0646", customers: "\u0627\u0644\u0632\u0628\u0627\u0626\u0646", reports: "\u0627\u0644\u062A\u0642\u0627\u0631\u064A\u0631", settings: "\u0627\u0644\u0625\u0639\u062F\u0627\u062F\u0627\u062A" };
-  return /* @__PURE__ */ React.createElement("div", { className: "min-h-screen flex", dir: "rtl", style: { background: C.bg, overflowX: "hidden", maxWidth: "100vw" } }, /* @__PURE__ */ React.createElement(AdminSidebar, { view, setView, mobileOpen, setMobileOpen }), /* @__PURE__ */ React.createElement("div", { className: "flex-1 min-w-0" }, /* @__PURE__ */ React.createElement(AdminTopbar, { title: titles[view], setMobileOpen }), view === "dashboard" && /* @__PURE__ */ React.createElement(AdminDashboard, { orders, products }), view === "orders" && /* @__PURE__ */ React.createElement(AdminOrders, { orders, changeStatus, showToast }), view === "products" && /* @__PURE__ */ React.createElement(AdminProducts, { products, productOps }), view === "categories" && /* @__PURE__ */ React.createElement(AdminCategories, { categories, categoryOps }), view === "inventory" && /* @__PURE__ */ React.createElement(AdminPlaceholder, { title: "\u0625\u062F\u0627\u0631\u0629 \u0627\u0644\u0645\u062E\u0632\u0648\u0646", icon: PackageSearch }), view === "customers" && /* @__PURE__ */ React.createElement(AdminPlaceholder, { title: "\u0627\u0644\u0632\u0628\u0627\u0626\u0646", icon: Users }), view === "reports" && /* @__PURE__ */ React.createElement(AdminPlaceholder, { title: "\u0627\u0644\u062A\u0642\u0627\u0631\u064A\u0631", icon: BarChart3 }), view === "settings" && /* @__PURE__ */ React.createElement(AdminSettings, { showToast })));
+  return /* @__PURE__ */ React.createElement("div", { className: "min-h-screen flex", dir: "rtl", style: { background: C.bg, overflowX: "hidden", maxWidth: "100vw" } }, /* @__PURE__ */ React.createElement(AdminSidebar, { view, setView, mobileOpen, setMobileOpen, isDesktop }), /* @__PURE__ */ React.createElement("div", { className: "flex-1 min-w-0", style: { marginRight: isDesktop ? 250 : 0 } }, /* @__PURE__ */ React.createElement(AdminTopbar, { title: titles[view], setMobileOpen, isDesktop }), view === "dashboard" && /* @__PURE__ */ React.createElement(AdminDashboard, { orders, products }), view === "orders" && /* @__PURE__ */ React.createElement(AdminOrders, { orders, changeStatus, showToast }), view === "products" && /* @__PURE__ */ React.createElement(AdminProducts, { products, productOps }), view === "categories" && /* @__PURE__ */ React.createElement(AdminCategories, { categories, categoryOps }), view === "inventory" && /* @__PURE__ */ React.createElement(AdminPlaceholder, { title: "\u0625\u062F\u0627\u0631\u0629 \u0627\u0644\u0645\u062E\u0632\u0648\u0646", icon: PackageSearch }), view === "customers" && /* @__PURE__ */ React.createElement(AdminPlaceholder, { title: "\u0627\u0644\u0632\u0628\u0627\u0626\u0646", icon: Users }), view === "reports" && /* @__PURE__ */ React.createElement(AdminPlaceholder, { title: "\u0627\u0644\u062A\u0642\u0627\u0631\u064A\u0631", icon: BarChart3 }), view === "settings" && /* @__PURE__ */ React.createElement(AdminSettings, { showToast })));
 }
 function App() {
   const [liveCategories, categoryOps] = useLiveCollection("categories", DEFAULT_CATEGORIES);
