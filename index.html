@@ -419,19 +419,23 @@ const DEFAULT_SETTINGS = {
 };
 function useLiveSettings() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [ready, setReady] = useState(false);
   useEffect(() => {
     const database = getDb();
-    if (!database) return;
+    if (!database) {
+      setReady(true);
+      return;
+    }
     const ref = database.collection("settings").doc("general");
     const unsub = ref.onSnapshot((doc) => {
       if (doc.exists) setSettings((s) => ({ ...s, ...doc.data() }));
       else ref.set(DEFAULT_SETTINGS).catch(() => {
       });
-    }, () => {
-    });
+      setReady(true);
+    }, () => setReady(true));
     return () => unsub();
   }, []);
-  return settings;
+  return [settings, ready];
 }
 function getNextOrderNumber() {
   const database = getDb();
@@ -841,6 +845,8 @@ function LocationPicker({ location, setLocation, onAvailability }) {
   const markerRef = useRef(null);
   const [leafletReady, setLeafletReady] = useState(typeof window !== "undefined" && !!window.L);
   const [mapFailed, setMapFailed] = useState(false);
+  const [locating, setLocating] = useState(false);
+  const [locateError, setLocateError] = useState("");
   useEffect(() => {
     if (leafletReady) {
       onAvailability && onAvailability(true);
@@ -873,28 +879,44 @@ function LocationPicker({ location, setLocation, onAvailability }) {
     marker.on("dragend", () => {
       const p = marker.getLatLng();
       setLocation({ lat: p.lat, lng: p.lng });
+      setLocateError("");
     });
     map.on("click", (e) => {
       marker.setLatLng(e.latlng);
       setLocation({ lat: e.latlng.lat, lng: e.latlng.lng });
+      setLocateError("");
     });
     mapInstance.current = map;
     markerRef.current = marker;
     setTimeout(() => map.invalidateSize(), 200);
   }, [leafletReady]);
   const useMyLocation = () => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+    setLocateError("");
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setLocateError("\u0645\u062A\u0635\u0641\u062D\u0643 \u0644\u0627 \u064A\u062F\u0639\u0645 \u062A\u062D\u062F\u064A\u062F \u0627\u0644\u0645\u0648\u0642\u0639 \u2014 \u062D\u062F\u062F \u0645\u0648\u0642\u0639\u0643 \u064A\u062F\u0648\u064A\u064B\u0627 \u0628\u0627\u0644\u0636\u063A\u0637 \u0639\u0644\u0649 \u0627\u0644\u062E\u0631\u064A\u0637\u0629");
+      return;
+    }
+    if (typeof window !== "undefined" && window.isSecureContext === false) {
+      setLocateError("\u062A\u062D\u062F\u064A\u062F \u0627\u0644\u0645\u0648\u0642\u0639 \u064A\u0639\u0645\u0644 \u0641\u0642\u0637 \u0639\u0628\u0631 \u0631\u0627\u0628\u0637 \u0622\u0645\u0646 (https) \u2014 \u062D\u062F\u062F \u0645\u0648\u0642\u0639\u0643 \u064A\u062F\u0648\u064A\u064B\u0627 \u0628\u0627\u0644\u0636\u063A\u0637 \u0639\u0644\u0649 \u0627\u0644\u062E\u0631\u064A\u0637\u0629");
+      return;
+    }
+    setLocating(true);
     navigator.geolocation.getCurrentPosition((pos) => {
+      setLocating(false);
       const { latitude, longitude } = pos.coords;
       setLocation({ lat: latitude, lng: longitude });
       if (mapInstance.current && markerRef.current) {
         mapInstance.current.setView([latitude, longitude], 16);
         markerRef.current.setLatLng([latitude, longitude]);
       }
-    }, () => {
-    });
+    }, (err) => {
+      setLocating(false);
+      if (err && err.code === 1) setLocateError("\u062A\u0645 \u0631\u0641\u0636 \u0625\u0630\u0646 \u0627\u0644\u0648\u0635\u0648\u0644 \u0644\u0644\u0645\u0648\u0642\u0639 \u2014 \u0641\u0639\u0651\u0644\u0647 \u0645\u0646 \u0625\u0639\u062F\u0627\u062F\u0627\u062A \u0627\u0644\u0645\u062A\u0635\u0641\u062D\u060C \u0623\u0648 \u062D\u062F\u062F \u0645\u0648\u0642\u0639\u0643 \u064A\u062F\u0648\u064A\u064B\u0627 \u0628\u0627\u0644\u0636\u063A\u0637 \u0639\u0644\u0649 \u0627\u0644\u062E\u0631\u064A\u0637\u0629");
+      else if (err && err.code === 3) setLocateError("\u0627\u0646\u062A\u0647\u062A \u0645\u0647\u0644\u0629 \u062A\u062D\u062F\u064A\u062F \u0627\u0644\u0645\u0648\u0642\u0639 \u2014 \u062D\u0627\u0648\u0644 \u0645\u062C\u062F\u062F\u064B\u0627 \u0623\u0648 \u062D\u062F\u062F \u0645\u0648\u0642\u0639\u0643 \u064A\u062F\u0648\u064A\u064B\u0627 \u0628\u0627\u0644\u0636\u063A\u0637 \u0639\u0644\u0649 \u0627\u0644\u062E\u0631\u064A\u0637\u0629");
+      else setLocateError("\u062A\u0639\u0630\u0651\u0631 \u062A\u062D\u062F\u064A\u062F \u0645\u0648\u0642\u0639\u0643 \u2014 \u062D\u062F\u062F \u0645\u0648\u0642\u0639\u0643 \u064A\u062F\u0648\u064A\u064B\u0627 \u0628\u0627\u0644\u0636\u063A\u0637 \u0639\u0644\u0649 \u0627\u0644\u062E\u0631\u064A\u0637\u0629");
+    }, { enableHighAccuracy: true, timeout: 1e4 });
   };
-  return /* @__PURE__ */ React.createElement("div", { className: "mb-4" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-2" }, /* @__PURE__ */ React.createElement("span", { className: "text-sm font-bold" }, "\u062D\u062F\u062F \u0645\u0648\u0642\u0639\u0643 \u0639\u0644\u0649 \u0627\u0644\u062E\u0631\u064A\u0637\u0629 ", /* @__PURE__ */ React.createElement("span", { style: { color: C.danger } }, "*")), /* @__PURE__ */ React.createElement("button", { type: "button", onClick: useMyLocation, className: "text-xs font-bold", style: { color: C.primary } }, "\u0627\u0633\u062A\u062E\u062F\u0645 \u0645\u0648\u0642\u0639\u064A \u0627\u0644\u062D\u0627\u0644\u064A")), leafletReady ? /* @__PURE__ */ React.createElement("div", { ref: mapRef, style: { height: 200, borderRadius: 16, overflow: "hidden", border: `1px solid ${location ? C.success : C.borderSoft}` } }) : /* @__PURE__ */ React.createElement("div", { className: "text-xs text-center py-6 rounded-2xl", style: { background: C.bg, color: C.textFaint } }, mapFailed ? "\u062A\u0639\u0630\u0651\u0631 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u062E\u0631\u064A\u0637\u0629 \u2014 \u064A\u0645\u0643\u0646\u0643 \u0625\u0643\u0645\u0627\u0644 \u0627\u0644\u0637\u0644\u0628\u060C \u0648\u0633\u062A\u064F\u062D\u062A\u0633\u0628 \u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644 \u0627\u0644\u062B\u0627\u0628\u062A\u0629" : "...\u062C\u0627\u0631\u064A \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u062E\u0631\u064A\u0637\u0629"), mapFailed ? null : location ? /* @__PURE__ */ React.createElement("p", { className: "text-xs mt-1.5 font-bold", style: { color: C.success } }, "\u062A\u0645 \u062A\u062D\u062F\u064A\u062F \u0627\u0644\u0645\u0648\u0642\u0639 \u2713") : /* @__PURE__ */ React.createElement("p", { className: "text-xs mt-1.5 font-bold", style: { color: C.danger } }, "\u062D\u062F\u062F \u0645\u0648\u0642\u0639\u0643 \u0628\u0627\u0644\u0636\u063A\u0637 \u0639\u0644\u0649 \u0627\u0644\u062E\u0631\u064A\u0637\u0629 \u0623\u0648 \u0627\u0633\u062A\u062E\u062F\u0627\u0645 \u0645\u0648\u0642\u0639\u0643 \u0627\u0644\u062D\u0627\u0644\u064A \u2014 \u0647\u0630\u0627 \u0645\u0637\u0644\u0648\u0628 \u0644\u062D\u0633\u0627\u0628 \u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644"));
+  return /* @__PURE__ */ React.createElement("div", { className: "mb-4" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-2" }, /* @__PURE__ */ React.createElement("span", { className: "text-sm font-bold" }, "\u062D\u062F\u062F \u0645\u0648\u0642\u0639\u0643 \u0639\u0644\u0649 \u0627\u0644\u062E\u0631\u064A\u0637\u0629 ", /* @__PURE__ */ React.createElement("span", { style: { color: C.danger } }, "*")), /* @__PURE__ */ React.createElement("button", { type: "button", onClick: useMyLocation, disabled: locating, className: "text-xs font-bold", style: { color: C.primary, opacity: locating ? 0.6 : 1 } }, locating ? "...\u062C\u0627\u0631\u064A \u062A\u062D\u062F\u064A\u062F \u0645\u0648\u0642\u0639\u0643" : "\u0627\u0633\u062A\u062E\u062F\u0645 \u0645\u0648\u0642\u0639\u064A \u0627\u0644\u062D\u0627\u0644\u064A")), leafletReady ? /* @__PURE__ */ React.createElement("div", { ref: mapRef, style: { height: 200, borderRadius: 16, overflow: "hidden", border: `1px solid ${location ? C.success : C.borderSoft}` } }) : /* @__PURE__ */ React.createElement("div", { className: "text-xs text-center py-6 rounded-2xl", style: { background: C.bg, color: C.textFaint } }, mapFailed ? "\u062A\u0639\u0630\u0651\u0631 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u062E\u0631\u064A\u0637\u0629 \u2014 \u064A\u0645\u0643\u0646\u0643 \u0625\u0643\u0645\u0627\u0644 \u0627\u0644\u0637\u0644\u0628\u060C \u0648\u0633\u062A\u064F\u062D\u062A\u0633\u0628 \u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644 \u0627\u0644\u062B\u0627\u0628\u062A\u0629" : "...\u062C\u0627\u0631\u064A \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u062E\u0631\u064A\u0637\u0629"), locateError && /* @__PURE__ */ React.createElement("p", { className: "text-xs mt-1.5 font-bold", style: { color: C.danger } }, locateError), mapFailed ? null : !locateError && (location ? /* @__PURE__ */ React.createElement("p", { className: "text-xs mt-1.5 font-bold", style: { color: C.success } }, "\u062A\u0645 \u062A\u062D\u062F\u064A\u062F \u0627\u0644\u0645\u0648\u0642\u0639 \u2713") : /* @__PURE__ */ React.createElement("p", { className: "text-xs mt-1.5 font-bold", style: { color: C.danger } }, "\u062D\u062F\u062F \u0645\u0648\u0642\u0639\u0643 \u0628\u0627\u0644\u0636\u063A\u0637 \u0639\u0644\u0649 \u0627\u0644\u062E\u0631\u064A\u0637\u0629 \u0623\u0648 \u0627\u0633\u062A\u062E\u062F\u0627\u0645 \u0645\u0648\u0642\u0639\u0643 \u0627\u0644\u062D\u0627\u0644\u064A \u2014 \u0647\u0630\u0627 \u0645\u0637\u0644\u0648\u0628 \u0644\u062D\u0633\u0627\u0628 \u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644")));
 }
 function CheckoutStep3({ addr, setAddr, next, back }) {
   const [mapAvailable, setMapAvailable] = useState(true);
@@ -904,15 +926,15 @@ function CheckoutStep3({ addr, setAddr, next, back }) {
 function CheckoutStep4({ next, back }) {
   return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0637\u0631\u064A\u0642\u0629 \u0627\u0644\u062F\u0641\u0639"), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-5 flex items-center gap-4 mb-6", style: { background: C.primarySoft, border: `2px solid ${C.primary}` } }, /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl flex items-center justify-center shrink-0", style: { width: 52, height: 52, background: C.surface } }, /* @__PURE__ */ React.createElement(Banknote, { size: 24, color: C.primary })), /* @__PURE__ */ React.createElement("div", { className: "flex-1" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, CONTENT.paymentMethodTitle), /* @__PURE__ */ React.createElement("div", { className: "text-xs mt-0.5", style: { color: C.textSoft } }, CONTENT.paymentMethodDesc)), /* @__PURE__ */ React.createElement("div", { className: "rounded-full flex items-center justify-center", style: { width: 24, height: 24, background: C.primary } }, /* @__PURE__ */ React.createElement(Check, { size: 14, color: "#fff", strokeWidth: 3 }))), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3" }, /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, onClick: back }, "\u0631\u062C\u0648\u0639"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, onClick: next }, "\u0645\u062A\u0627\u0628\u0639\u0629")));
 }
-function CheckoutStep5({ cart, form, addr, back, confirm }) {
+function CheckoutStep5({ cart, form, addr, back, confirm, settingsReady }) {
   const items = Object.values(cart);
   const subtotal = items.reduce((s, i) => s + lineTotal(i.product, i.qty), 0);
   const deliveryFee = computeDeliveryFee(addr.location);
   const total = subtotal + deliveryFee;
-  return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0645\u0631\u0627\u062C\u0639\u0629 \u0627\u0644\u0637\u0644\u0628"), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-4 mb-4", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-col gap-2.5 mb-3" }, items.map(({ product, qty }) => /* @__PURE__ */ React.createElement("div", { key: product.id, className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", null, product.name, " ", /* @__PURE__ */ React.createElement("span", { style: { color: C.textFaint } }, "\xD7 ", qty)), /* @__PURE__ */ React.createElement("span", { className: "font-bold" }, money(lineTotal(product, qty)))))), /* @__PURE__ */ React.createElement("div", { className: "pt-3 flex flex-col gap-1.5", style: { borderTop: `1px dashed ${C.border}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { style: { color: C.textSoft } }, "\u0627\u0644\u0645\u062C\u0645\u0648\u0639 \u0627\u0644\u0641\u0631\u0639\u064A"), /* @__PURE__ */ React.createElement("span", null, money(subtotal))), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { style: { color: C.textSoft } }, "\u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644", addr.location ? " (\u062D\u0633\u0628 \u0627\u0644\u0645\u0633\u0627\u0641\u0629)" : ""), /* @__PURE__ */ React.createElement("span", null, money(deliveryFee))), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between font-bold text-base pt-1" }, /* @__PURE__ */ React.createElement("span", null, "\u0627\u0644\u0625\u062C\u0645\u0627\u0644\u064A"), /* @__PURE__ */ React.createElement("span", { style: { color: C.primary } }, money(total))))), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-4 mb-4 flex flex-col gap-2.5 text-sm", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(User, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, form.name)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Phone, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("bdi", null, form.code, " ", form.phone)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(MapPin, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, addr.city, " - ", addr.area, " - ", addr.street, "\u060C \u0645\u0628\u0646\u0649 ", addr.building)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Banknote, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, "\u0627\u0644\u062F\u0641\u0639 \u0639\u0646\u062F \u0627\u0644\u0627\u0633\u062A\u0644\u0627\u0645"))), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3" }, /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, onClick: back }, "\u0631\u062C\u0648\u0639"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, size: "lg", onClick: confirm }, CONTENT.orderConfirmButton)));
+  return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0645\u0631\u0627\u062C\u0639\u0629 \u0627\u0644\u0637\u0644\u0628"), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-4 mb-4", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-col gap-2.5 mb-3" }, items.map(({ product, qty }) => /* @__PURE__ */ React.createElement("div", { key: product.id, className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", null, product.name, " ", /* @__PURE__ */ React.createElement("span", { style: { color: C.textFaint } }, "\xD7 ", qty)), /* @__PURE__ */ React.createElement("span", { className: "font-bold" }, money(lineTotal(product, qty)))))), /* @__PURE__ */ React.createElement("div", { className: "pt-3 flex flex-col gap-1.5", style: { borderTop: `1px dashed ${C.border}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { style: { color: C.textSoft } }, "\u0627\u0644\u0645\u062C\u0645\u0648\u0639 \u0627\u0644\u0641\u0631\u0639\u064A"), /* @__PURE__ */ React.createElement("span", null, money(subtotal))), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { style: { color: C.textSoft } }, "\u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644", addr.location ? " (\u062D\u0633\u0628 \u0627\u0644\u0645\u0633\u0627\u0641\u0629)" : ""), /* @__PURE__ */ React.createElement("span", null, money(deliveryFee))), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between font-bold text-base pt-1" }, /* @__PURE__ */ React.createElement("span", null, "\u0627\u0644\u0625\u062C\u0645\u0627\u0644\u064A"), /* @__PURE__ */ React.createElement("span", { style: { color: C.primary } }, money(total))))), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-4 mb-4 flex flex-col gap-2.5 text-sm", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(User, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, form.name)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Phone, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("bdi", null, form.code, " ", form.phone)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(MapPin, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, addr.city, " - ", addr.area, " - ", addr.street, "\u060C \u0645\u0628\u0646\u0649 ", addr.building)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Banknote, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, "\u0627\u0644\u062F\u0641\u0639 \u0639\u0646\u062F \u0627\u0644\u0627\u0633\u062A\u0644\u0627\u0645"))), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3" }, /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, onClick: back }, "\u0631\u062C\u0648\u0639"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, size: "lg", disabled: !settingsReady, onClick: confirm }, settingsReady ? CONTENT.orderConfirmButton : "...\u062C\u0627\u0631\u064D \u0627\u0644\u062A\u062D\u0645\u064A\u0644")));
 }
-function CheckoutFlow({ step, setStep, cart, form, setForm, addr, setAddr, confirm }) {
-  return /* @__PURE__ */ React.createElement("div", { className: "px-4 md:px-6 py-8 pb-10" }, /* @__PURE__ */ React.createElement(Stepper, { step }), step === 1 && /* @__PURE__ */ React.createElement(CheckoutStep1, { form, setForm, next: () => setStep(2) }), step === 2 && /* @__PURE__ */ React.createElement(CheckoutStep3, { addr, setAddr, next: () => setStep(3), back: () => setStep(1) }), step === 3 && /* @__PURE__ */ React.createElement(CheckoutStep4, { next: () => setStep(4), back: () => setStep(2) }), step === 4 && /* @__PURE__ */ React.createElement(CheckoutStep5, { cart, form, addr, back: () => setStep(3), confirm }));
+function CheckoutFlow({ step, setStep, cart, form, setForm, addr, setAddr, confirm, settingsReady }) {
+  return /* @__PURE__ */ React.createElement("div", { className: "px-4 md:px-6 py-8 pb-10" }, /* @__PURE__ */ React.createElement(Stepper, { step }), step === 1 && /* @__PURE__ */ React.createElement(CheckoutStep1, { form, setForm, next: () => setStep(2) }), step === 2 && /* @__PURE__ */ React.createElement(CheckoutStep3, { addr, setAddr, next: () => setStep(3), back: () => setStep(1) }), step === 3 && /* @__PURE__ */ React.createElement(CheckoutStep4, { next: () => setStep(4), back: () => setStep(2) }), step === 4 && /* @__PURE__ */ React.createElement(CheckoutStep5, { cart, form, addr, back: () => setStep(3), confirm, settingsReady }));
 }
 function OrderSuccessScreen({ order, setView }) {
   if (!order) return null;
@@ -973,7 +995,7 @@ function App() {
   const [liveProducts, prodOps] = useLiveCollection("products", DEFAULT_PRODUCTS);
   CATEGORIES = liveCategories;
   PRODUCTS = liveProducts;
-  const settings = useLiveSettings();
+  const [settings, settingsReady] = useLiveSettings();
   DELIVERY_FEE = settings.deliveryFee;
   STORE_LAT = settings.storeLat;
   STORE_LNG = settings.storeLng;
@@ -1062,6 +1084,7 @@ function App() {
     const subtotal = Object.values(cart).reduce((s, i) => s + lineTotal(i.product, i.qty), 0);
     const phone = `${form.code}${form.phone}`;
     const deliveryFee = computeDeliveryFee(addr.location);
+    const distanceKm = addr.location ? haversineKm(addr.location.lat, addr.location.lng, STORE_LAT, STORE_LNG) : null;
     getNextOrderNumber().then((orderId) => {
       const newOrder = {
         id: orderId,
@@ -1069,6 +1092,7 @@ function App() {
         amount: subtotal + deliveryFee,
         count: cartCount,
         deliveryFee,
+        distanceKm,
         status: "\u062C\u062F\u064A\u062F",
         customer: form.name,
         phone,
@@ -1117,7 +1141,7 @@ function App() {
     setView("shop");
   };
   return /* @__PURE__ */ React.createElement("div", { className: "smk-root min-h-screen flex flex-col", dir: "rtl" }, /* @__PURE__ */ React.createElement(GlobalStyle, null), view !== "checkout" && view !== "success" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(CustomerNavbar, { view, setView, cartCount, setCartOpen, query, setQuery, onSearchFocus: () => {
-  }, onNavLink: handleNavLink, activeCat, offersOnly }), /* @__PURE__ */ React.createElement(MobileTopBar, { setView, cartCount, setCartOpen })), /* @__PURE__ */ React.createElement("div", { className: "flex-1 pb-16 md:pb-0" }, view === "home" && /* @__PURE__ */ React.createElement(HomeScreen, { setView, cart, updateQty, addToCart, openProduct, loading, setActiveCat, goShop }), view === "shop" && /* @__PURE__ */ React.createElement(ShopScreen, { cart, updateQty, addToCart, openProduct, activeCat, setActiveCat, query, setQuery, offersOnly, setOffersOnly }), view === "product" && /* @__PURE__ */ React.createElement(ProductDetail, { product: selectedProduct, cart, updateQty, addToCart, back: () => goShop(activeCat), openProduct }), view === "checkout" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "max-w-4xl mx-auto px-4 pt-5" }, /* @__PURE__ */ React.createElement("button", { onClick: () => setView("home"), className: "smk-focus flex items-center gap-1 text-xs font-bold", style: { color: C.textFaint } }, /* @__PURE__ */ React.createElement(ChevronRight, { size: 13 }), "\u0627\u0644\u0639\u0648\u062F\u0629 \u0644\u0644\u0645\u062A\u062C\u0631")), /* @__PURE__ */ React.createElement(CheckoutFlow, { step: checkoutStep, setStep: setCheckoutStep, cart, form, setForm, addr, setAddr, confirm: confirmOrder })), view === "success" && /* @__PURE__ */ React.createElement(OrderSuccessScreen, { order: lastOrder, setView }), view === "orders" && /* @__PURE__ */ React.createElement(OrdersScreen, { orders, setView, goShop }), view === "account" && /* @__PURE__ */ React.createElement(AccountScreen, { setView, form, setForm, addr, setAddr, showToast })), view !== "checkout" && view !== "success" && /* @__PURE__ */ React.createElement(MobileBottomNav, { view, setView, goShop }), /* @__PURE__ */ React.createElement(CartDrawer, { open: cartOpen, onClose: () => setCartOpen(false), cart, updateQty, removeItem, onCheckout: goCheckout, setView, goShop }), mobileSearchOpen && /* @__PURE__ */ React.createElement(SearchOverlay, { query, setQuery, onClose: () => setMobileSearchOpen(false), onPick: (p) => {
+  }, onNavLink: handleNavLink, activeCat, offersOnly }), /* @__PURE__ */ React.createElement(MobileTopBar, { setView, cartCount, setCartOpen })), /* @__PURE__ */ React.createElement("div", { className: "flex-1 pb-16 md:pb-0" }, view === "home" && /* @__PURE__ */ React.createElement(HomeScreen, { setView, cart, updateQty, addToCart, openProduct, loading, setActiveCat, goShop }), view === "shop" && /* @__PURE__ */ React.createElement(ShopScreen, { cart, updateQty, addToCart, openProduct, activeCat, setActiveCat, query, setQuery, offersOnly, setOffersOnly }), view === "product" && /* @__PURE__ */ React.createElement(ProductDetail, { product: selectedProduct, cart, updateQty, addToCart, back: () => goShop(activeCat), openProduct }), view === "checkout" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "max-w-4xl mx-auto px-4 pt-5" }, /* @__PURE__ */ React.createElement("button", { onClick: () => setView("home"), className: "smk-focus flex items-center gap-1 text-xs font-bold", style: { color: C.textFaint } }, /* @__PURE__ */ React.createElement(ChevronRight, { size: 13 }), "\u0627\u0644\u0639\u0648\u062F\u0629 \u0644\u0644\u0645\u062A\u062C\u0631")), /* @__PURE__ */ React.createElement(CheckoutFlow, { step: checkoutStep, setStep: setCheckoutStep, cart, form, setForm, addr, setAddr, confirm: confirmOrder, settingsReady })), view === "success" && /* @__PURE__ */ React.createElement(OrderSuccessScreen, { order: lastOrder, setView }), view === "orders" && /* @__PURE__ */ React.createElement(OrdersScreen, { orders, setView, goShop }), view === "account" && /* @__PURE__ */ React.createElement(AccountScreen, { setView, form, setForm, addr, setAddr, showToast })), view !== "checkout" && view !== "success" && /* @__PURE__ */ React.createElement(MobileBottomNav, { view, setView, goShop }), /* @__PURE__ */ React.createElement(CartDrawer, { open: cartOpen, onClose: () => setCartOpen(false), cart, updateQty, removeItem, onCheckout: goCheckout, setView, goShop }), mobileSearchOpen && /* @__PURE__ */ React.createElement(SearchOverlay, { query, setQuery, onClose: () => setMobileSearchOpen(false), onPick: (p) => {
     setMobileSearchOpen(false);
     openProduct(p);
   } }), /* @__PURE__ */ React.createElement(ToastStack, { toasts }));
