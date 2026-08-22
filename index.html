@@ -337,6 +337,11 @@ function useLiveCollection(collectionName, defaults) {
       });
       if (list.every((x) => typeof x.order === "number")) list.sort((a, b) => a.order - b.order);
       setItems(list);
+      seedFlagRef.get().then((doc) => {
+        if (!doc.exists) seedFlagRef.set({ done: true }).catch(() => {
+        });
+      }).catch(() => {
+      });
     }, () => {
     });
     return () => unsub();
