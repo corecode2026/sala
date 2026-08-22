@@ -179,7 +179,7 @@ const GlobalStyle = () => /* @__PURE__ */ React.createElement("style", null, `
     .smk-focus:focus-visible{outline:2px solid ${C.accent};outline-offset:2px;}
     input, select, textarea, button{font-family:inherit;}
   `);
-const CONTENT = {
+const DEFAULT_CONTENT = {
   storeName: "\u0633\u0644\u0629",
   // الجزء الأول من اسم المتجر (يظهر بلون غامق)
   storeNameAccent: "\u0628\u064A\u062A",
@@ -216,6 +216,8 @@ const CONTENT = {
   accountUserName: "\u0645\u062D\u0645\u062F \u0623\u062D\u0645\u062F"
   // اسم الزبون التجريبي في صفحة الحساب
 };
+const CONTENT_KEYS = Object.keys(DEFAULT_CONTENT).filter((k) => k !== "navLinks");
+let CONTENT = DEFAULT_CONTENT;
 const ICONS = {
   Home,
   Search,
@@ -407,7 +409,12 @@ function addOrderRecord(order, onError) {
     });
   }
 }
-const DEFAULT_SETTINGS = { deliveryFee: 15, storeLat: 32.2211, storeLng: 35.2544 };
+const DEFAULT_SETTINGS = {
+  deliveryFee: 15,
+  storeLat: 32.2211,
+  storeLng: 35.2544,
+  ...Object.fromEntries(CONTENT_KEYS.map((k) => [k, DEFAULT_CONTENT[k]]))
+};
 function useLiveSettings() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   useEffect(() => {
@@ -942,6 +949,7 @@ function App() {
   DELIVERY_FEE = settings.deliveryFee;
   STORE_LAT = settings.storeLat;
   STORE_LNG = settings.storeLng;
+  CONTENT = { ...DEFAULT_CONTENT, ...Object.fromEntries(CONTENT_KEYS.map((k) => [k, settings[k]])) };
   const [view, setView] = useState("home");
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState({});
