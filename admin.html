@@ -718,11 +718,12 @@ function Table({ columns, children }) {
   return /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl overflow-hidden", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("div", { className: "overflow-x-auto" }, /* @__PURE__ */ React.createElement("table", { className: "w-full text-sm" }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", { style: { background: C.bg } }, columns.map((c) => /* @__PURE__ */ React.createElement("th", { key: c, className: "text-right px-4 py-3 font-bold whitespace-nowrap", style: { color: C.textSoft } }, c)))), /* @__PURE__ */ React.createElement("tbody", null, children))));
 }
 function AdminProducts({ products, productOps }) {
+  var _a;
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [toDelete, setToDelete] = useState(null);
   const fileInputRef = useRef(null);
-  const blankForm = { name: "", desc: "", price: "", unit: "", cat: CATEGORIES[0].id, stock: "", active: true, dealEnabled: false, dealQty: "3", dealPrice: "", image: null };
+  const blankForm = { name: "", desc: "", price: "", unit: "", cat: ((_a = CATEGORIES[0]) == null ? void 0 : _a.id) || "", stock: "", active: true, dealEnabled: false, dealQty: "3", dealPrice: "", image: null };
   const [form, setForm] = useState(blankForm);
   const openNew = () => {
     setEditing(null);
@@ -806,8 +807,8 @@ function AdminProducts({ products, productOps }) {
     },
     /* @__PURE__ */ React.createElement("input", { ref: fileInputRef, type: "file", accept: "image/*", style: { display: "none" }, onChange: handleImageChange }),
     /* @__PURE__ */ React.createElement("div", { onClick: () => {
-      var _a;
-      return (_a = fileInputRef.current) == null ? void 0 : _a.click();
+      var _a2;
+      return (_a2 = fileInputRef.current) == null ? void 0 : _a2.click();
     }, className: "rounded-2xl flex flex-col items-center justify-center gap-2 py-6 mb-2 cursor-pointer overflow-hidden relative", style: { border: `2px dashed ${C.border}`, background: C.bg, minHeight: 120 } }, form.image ? /* @__PURE__ */ React.createElement("img", { src: form.image, alt: "", style: { maxHeight: 140, maxWidth: "100%", borderRadius: 12, objectFit: "contain" } }) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(ImagePlus, { size: 26, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", { className: "text-xs font-bold", style: { color: C.textFaint } }, "\u0627\u0636\u063A\u0637 \u0644\u0631\u0641\u0639 \u0635\u0648\u0631\u0629 \u0627\u0644\u0645\u0646\u062A\u062C"))),
     form.image && /* @__PURE__ */ React.createElement("button", { onClick: (e) => {
       e.stopPropagation();
