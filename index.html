@@ -289,28 +289,8 @@ function getDb() {
     return null;
   }
 }
-const DEFAULT_CATEGORIES = [
-  { id: "c1", name: "\u0641\u0648\u0627\u0643\u0647 \u0648\u062E\u0636\u0627\u0631", count: 42, icon: Carrot, iconName: "Carrot", color: C.primary, order: 0 },
-  { id: "c2", name: "\u0623\u0644\u0628\u0627\u0646 \u0648\u0628\u064A\u0636", count: 18, icon: Milk, iconName: "Milk", color: "#3D6E93", order: 1 },
-  { id: "c3", name: "\u0645\u062E\u0628\u0648\u0632\u0627\u062A", count: 12, icon: Croissant, iconName: "Croissant", color: C.accent, order: 2 },
-  { id: "c4", name: "\u0645\u0634\u0631\u0648\u0628\u0627\u062A", count: 27, icon: CupSoda, iconName: "CupSoda", color: "#7A5AA6", order: 3 },
-  { id: "c5", name: "\u0644\u062D\u0648\u0645 \u0648\u062F\u0648\u0627\u062C\u0646", count: 15, icon: Beef, iconName: "Beef", color: C.danger, order: 4 },
-  { id: "c6", name: "\u0645\u0646\u0638\u0641\u0627\u062A", count: 21, icon: Sparkles, iconName: "Sparkles", color: "#2E8B8B", order: 5 }
-];
-const DEFAULT_PRODUCTS = [
-  { id: "p1", name: "\u0645\u0648\u0632 \u0639\u0636\u0648\u064A", price: 6.5, unit: "\u0643\u064A\u0644\u0648", cat: "c1", stock: 40, icon: Apple, iconName: "Apple", tag: "", deal: null },
-  { id: "p2", name: "\u0637\u0645\u0627\u0637\u0645 \u0628\u0644\u062F\u064A", price: 4.9, unit: "\u0643\u064A\u0644\u0648", cat: "c1", stock: 0, icon: Carrot, iconName: "Carrot", tag: "", deal: null },
-  { id: "p3", name: "\u062D\u0644\u064A\u0628 \u0637\u0627\u0632\u062C", price: 7, unit: "\u0639\u0644\u0628\u0629 1 \u0644\u062A\u0631", cat: "c2", stock: 30, icon: Milk, iconName: "Milk", tag: "\u062E\u0635\u0645", deal: null },
-  { id: "p4", name: "\u0628\u064A\u0636 \u0628\u0644\u062F\u064A", price: 12, unit: "\u0637\u0628\u0642 30 \u0628\u064A\u0636\u0629", cat: "c2", stock: 8, icon: Milk, iconName: "Milk", tag: "", deal: null },
-  { id: "p5", name: "\u062E\u0628\u0632 \u0623\u0633\u0645\u0631", price: 3.5, unit: "\u0643\u064A\u0633", cat: "c3", stock: 25, icon: Croissant, iconName: "Croissant", tag: "", deal: null },
-  { id: "p6", name: "\u0643\u0631\u0648\u0627\u0633\u0648\u0646 \u0632\u0628\u062F\u0629", price: 9, unit: "\u0639\u0644\u0628\u0629 4 \u062D\u0628\u0627\u062A", cat: "c3", stock: 14, icon: Croissant, iconName: "Croissant", tag: "\u062C\u062F\u064A\u062F", deal: null },
-  { id: "p7", name: "\u0639\u0635\u064A\u0631 \u0628\u0631\u062A\u0642\u0627\u0644 \u0637\u0628\u064A\u0639\u064A", price: 8.5, unit: "1 \u0644\u062A\u0631", cat: "c4", stock: 20, icon: CupSoda, iconName: "CupSoda", tag: "", deal: null },
-  { id: "p8", name: "\u0645\u064A\u0627\u0647 \u0645\u0639\u062F\u0646\u064A\u0629", price: 5, unit: "1.5 \u0644\u062A\u0631", cat: "c4", stock: 60, icon: CupSoda, iconName: "CupSoda", tag: "\u0639\u0631\u0636", deal: { qty: 3, price: 10 } },
-  { id: "p9", name: "\u0635\u062F\u0648\u0631 \u062F\u062C\u0627\u062C", price: 22, unit: "\u0643\u064A\u0644\u0648", cat: "c5", stock: 5, icon: Beef, iconName: "Beef", tag: "", deal: null },
-  { id: "p10", name: "\u0644\u062D\u0645 \u0645\u0641\u0631\u0648\u0645", price: 38, unit: "\u0643\u064A\u0644\u0648", cat: "c5", stock: 0, icon: Beef, iconName: "Beef", tag: "", deal: null },
-  { id: "p11", name: "\u0633\u0627\u0626\u0644 \u062C\u0644\u064A", price: 5.5, unit: "750 \u0645\u0644", cat: "c6", stock: 33, icon: Sparkles, iconName: "Sparkles", tag: "\u062E\u0635\u0645", deal: null },
-  { id: "p12", name: "\u0645\u0646\u0638\u0641 \u0623\u0631\u0636\u064A\u0627\u062A", price: 6, unit: "1 \u0644\u062A\u0631", cat: "c6", stock: 18, icon: Sparkles, iconName: "Sparkles", tag: "", deal: null }
-];
+const DEFAULT_CATEGORIES = [];
+const DEFAULT_PRODUCTS = [];
 let CATEGORIES = DEFAULT_CATEGORIES;
 let PRODUCTS = DEFAULT_PRODUCTS;
 function useLiveCollection(collectionName, defaults) {
