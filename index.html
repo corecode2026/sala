@@ -379,10 +379,11 @@ function useCustomerOrders(phone) {
   }, [phone]);
   return [orders, setOrders];
 }
-function addOrderRecord(order) {
+function addOrderRecord(order, onError) {
   const database = getDb();
   if (database) {
-    database.collection("orders").doc(order.id).set({ ...order, createdAtMs: Date.now() }).catch(() => {
+    database.collection("orders").doc(order.id).set({ ...order, createdAtMs: Date.now() }).catch((e) => {
+      if (onError) onError(e);
     });
   }
 }
@@ -814,8 +815,22 @@ function App() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [checkoutStep, setCheckoutStep] = useState(1);
-  const [form, setForm] = useState({ name: "", phone: "", code: "+970" });
-  const [addr, setAddr] = useState({ city: "", area: "", street: "", building: "", floor: "", apt: "", details: "", notes: "", save: false });
+  const [form, setForm] = useState(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem("smk_customer_profile") || "null");
+      return (saved == null ? void 0 : saved.form) || { name: "", phone: "", code: "+970" };
+    } catch (e) {
+      return { name: "", phone: "", code: "+970" };
+    }
+  });
+  const [addr, setAddr] = useState(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem("smk_customer_profile") || "null");
+      return (saved == null ? void 0 : saved.addr) || { city: "", area: "", street: "", building: "", floor: "", apt: "", details: "", notes: "", save: false };
+    } catch (e) {
+      return { city: "", area: "", street: "", building: "", floor: "", apt: "", details: "", notes: "", save: false };
+    }
+  });
   const [customerPhone, setCustomerPhone] = useState(() => {
     try {
       return window.localStorage.getItem("smk_customer_phone") || "";
@@ -874,7 +889,7 @@ function App() {
     const subtotal = Object.values(cart).reduce((s, i) => s + lineTotal(i.product, i.qty), 0);
     const phone = `${form.code}${form.phone}`;
     const newOrder = {
-      id: String(10245 + orders.length - 2),
+      id: String(Math.floor(1e5 + Math.random() * 9e5)),
       date: "\u0627\u0644\u064A\u0648\u0645",
       amount: subtotal + DELIVERY_FEE,
       count: cartCount,
@@ -885,9 +900,10 @@ function App() {
       notes: addr.notes
     };
     setOrders((o) => [newOrder, ...o]);
-    addOrderRecord(newOrder);
+    addOrderRecord(newOrder, () => showToast("\u062A\u0639\u0630\u0651\u0631\u062A \u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u0637\u0644\u0628 \u0645\u0639 \u0627\u0644\u062E\u0627\u062F\u0645 \u2014 \u062A\u0623\u0643\u062F \u0645\u0646 \u0625\u0639\u062F\u0627\u062F\u0627\u062A Firebase", "danger"));
     try {
       window.localStorage.setItem("smk_customer_phone", phone);
+      window.localStorage.setItem("smk_customer_profile", JSON.stringify({ form, addr }));
     } catch (e) {
     }
     setCustomerPhone(phone);
