@@ -854,7 +854,7 @@ function ProductCard({ p, qty, onAdd, onInc, onDec, onOpen }) {
   const outOfStock = p.stock === 0;
   const lowStock = p.stock > 0 && p.stock <= 8;
   const isPromo = p.tag === "\u062E\u0635\u0645" || p.tag === "\u0639\u0631\u0636";
-  return /* @__PURE__ */ React.createElement("div", { className: "smk-fadeUp rounded-2xl p-3.5 flex flex-col gap-3 relative", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, p.tag && !outOfStock && /* @__PURE__ */ React.createElement("span", { className: "absolute top-3 right-3 z-10 text-[10px] font-bold px-2 py-1 rounded-full", style: { background: isPromo ? C.dangerSoft : C.accentSoft, color: isPromo ? C.danger : C.accentHover } }, p.tag), /* @__PURE__ */ React.createElement("button", { onClick: () => onOpen(p), className: "smk-focus self-center" }, /* @__PURE__ */ React.createElement(ProductIcon, { Icon: p.icon, image: p.image, color: ((_a = CATEGORIES.find((c) => c.id === p.cat)) == null ? void 0 : _a.color) || C.primary, size: "md", faded: outOfStock })), /* @__PURE__ */ React.createElement("div", { className: "text-center" }, /* @__PURE__ */ React.createElement("button", { onClick: () => onOpen(p), className: "smk-focus font-bold text-sm leading-snug hover:underline" }, p.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs mt-0.5", style: { color: C.textFaint } }, p.unit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between" }, /* @__PURE__ */ React.createElement("span", { className: "smk-display font-extrabold text-base", style: { color: C.primary } }, money(p.price)), outOfStock ? /* @__PURE__ */ React.createElement(Badge, { bg: C.dangerSoft, fg: C.danger }, "\u063A\u064A\u0631 \u0645\u062A\u0648\u0641\u0631") : lowStock ? /* @__PURE__ */ React.createElement(Badge, { bg: C.warnSoft, fg: C.warn }, CONTENT.lowStockLabel) : null), p.deal && !outOfStock && /* @__PURE__ */ React.createElement("div", { className: "text-xs font-bold rounded-lg px-2 py-1.5 text-center", style: { background: C.dangerSoft, color: C.danger } }, p.deal.qty, " \u0642\u0637\u0639 \u0645\u0642\u0627\u0628\u0644 ", money(p.deal.price)), outOfStock ? /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, disabled: true }, CONTENT.outOfStockLabel) : qty > 0 ? /* @__PURE__ */ React.createElement(QtyStepper, { qty, onInc, onDec }) : /* @__PURE__ */ React.createElement(Btn, { variant: "secondary", full: true, icon: Plus, onClick: onAdd }, CONTENT.addToCartLabel));
+  return /* @__PURE__ */ React.createElement("div", { className: "smk-fadeUp rounded-2xl p-3.5 flex flex-col gap-3 relative", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, p.tag && !outOfStock && /* @__PURE__ */ React.createElement("span", { className: "absolute top-3 right-3 z-10 text-[10px] font-bold px-2 py-1 rounded-full", style: { background: isPromo ? C.dangerSoft : C.accentSoft, color: isPromo ? C.danger : C.accentHover } }, p.tag), p.image ? /* @__PURE__ */ React.createElement("button", { onClick: () => onOpen(p), className: "smk-focus block w-full rounded-xl overflow-hidden", style: { aspectRatio: "1 / 1" } }, /* @__PURE__ */ React.createElement("img", { src: p.image, alt: p.name, className: "w-full h-full", style: { objectFit: "cover", opacity: outOfStock ? 0.45 : 1 } })) : /* @__PURE__ */ React.createElement("button", { onClick: () => onOpen(p), className: "smk-focus self-center" }, /* @__PURE__ */ React.createElement(ProductIcon, { Icon: p.icon, color: ((_a = CATEGORIES.find((c) => c.id === p.cat)) == null ? void 0 : _a.color) || C.primary, size: "md", faded: outOfStock })), /* @__PURE__ */ React.createElement("div", { className: "text-center" }, /* @__PURE__ */ React.createElement("button", { onClick: () => onOpen(p), className: "smk-focus font-bold text-sm leading-snug hover:underline" }, p.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs mt-0.5", style: { color: C.textFaint } }, p.unit)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between" }, /* @__PURE__ */ React.createElement("span", { className: "smk-display font-extrabold text-base", style: { color: C.primary } }, money(p.price)), outOfStock ? /* @__PURE__ */ React.createElement(Badge, { bg: C.dangerSoft, fg: C.danger }, "\u063A\u064A\u0631 \u0645\u062A\u0648\u0641\u0631") : lowStock ? /* @__PURE__ */ React.createElement(Badge, { bg: C.warnSoft, fg: C.warn }, CONTENT.lowStockLabel) : null), p.deal && !outOfStock && /* @__PURE__ */ React.createElement("div", { className: "text-xs font-bold rounded-lg px-2 py-1.5 text-center", style: { background: C.dangerSoft, color: C.danger } }, p.deal.qty, " \u0642\u0637\u0639 \u0645\u0642\u0627\u0628\u0644 ", money(p.deal.price)), outOfStock ? /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, disabled: true }, CONTENT.outOfStockLabel) : qty > 0 ? /* @__PURE__ */ React.createElement(QtyStepper, { qty, onInc, onDec }) : /* @__PURE__ */ React.createElement(Btn, { variant: "secondary", full: true, icon: Plus, onClick: onAdd }, CONTENT.addToCartLabel));
 }
 function ProductGridSkeleton({ n = 8 }) {
   return /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 md:grid-cols-4 gap-3.5" }, Array.from({ length: n }).map((_, i) => /* @__PURE__ */ React.createElement("div", { key: i, className: "rounded-2xl p-3.5 flex flex-col gap-3", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement(Skeleton, { className: "w-16 h-16 rounded-2xl self-center" }), /* @__PURE__ */ React.createElement(Skeleton, { className: "h-4 w-3/4 mx-auto" }), /* @__PURE__ */ React.createElement(Skeleton, { className: "h-3 w-1/2 mx-auto" }), /* @__PURE__ */ React.createElement(Skeleton, { className: "h-9 w-full rounded-xl" }))));
@@ -873,7 +873,7 @@ function SearchOverlay({ query, setQuery, onClose, onPick }) {
     }
   ))), /* @__PURE__ */ React.createElement("div", { className: "p-4" }, !query.trim() ? /* @__PURE__ */ React.createElement("p", { className: "text-sm text-center pt-10", style: { color: C.textFaint } }, "\u0627\u0643\u062A\u0628 \u0627\u0633\u0645 \u0627\u0644\u0645\u0646\u062A\u062C \u0644\u0644\u0628\u062D\u062B") : results.length === 0 ? /* @__PURE__ */ React.createElement(EmptyState, { title: "\u0644\u0627 \u062A\u0648\u062C\u062F \u0646\u062A\u0627\u0626\u062C", desc: "\u062C\u0631\u0651\u0628 \u0643\u0644\u0645\u0629 \u0628\u062D\u062B \u0645\u062E\u062A\u0644\u0641\u0629", illustration: /* @__PURE__ */ React.createElement(NoResultsIllustration, null) }) : /* @__PURE__ */ React.createElement("div", { className: "flex flex-col gap-2" }, results.map((p) => {
     var _a;
-    return /* @__PURE__ */ React.createElement("button", { key: p.id, onClick: () => onPick(p), className: "smk-focus flex items-center gap-3 p-2.5 rounded-2xl text-right", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement(ProductIcon, { Icon: p.icon, color: (_a = CATEGORIES.find((c) => c.id === p.cat)) == null ? void 0 : _a.color, size: "sm" }), /* @__PURE__ */ React.createElement("div", { className: "flex-1" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold text-sm" }, p.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs", style: { color: C.textFaint } }, p.unit)), /* @__PURE__ */ React.createElement("span", { className: "font-bold text-sm", style: { color: C.primary } }, money(p.price)));
+    return /* @__PURE__ */ React.createElement("button", { key: p.id, onClick: () => onPick(p), className: "smk-focus flex items-center gap-3 p-2.5 rounded-2xl text-right", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement(ProductIcon, { Icon: p.icon, image: p.image, color: (_a = CATEGORIES.find((c) => c.id === p.cat)) == null ? void 0 : _a.color, size: "sm" }), /* @__PURE__ */ React.createElement("div", { className: "flex-1" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold text-sm" }, p.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs", style: { color: C.textFaint } }, p.unit)), /* @__PURE__ */ React.createElement("span", { className: "font-bold text-sm", style: { color: C.primary } }, money(p.price)));
   }))));
 }
 function HomeScreen({ setView, cart, updateQty, addToCart, openProduct, loading, setActiveCat, goShop }) {
@@ -978,7 +978,7 @@ function CartDrawer({ open, onClose, cart, updateQty, removeItem, onCheckout, se
       }
     ) : /* @__PURE__ */ React.createElement("div", { className: "flex flex-col gap-3" }, items.map(({ product, qty }) => {
       var _a;
-      return /* @__PURE__ */ React.createElement("div", { key: product.id, className: "smk-fadeUp flex items-center gap-3 pb-3", style: { borderBottom: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement(ProductIcon, { Icon: product.icon, color: (_a = CATEGORIES.find((c) => c.id === product.cat)) == null ? void 0 : _a.color, size: "sm" }), /* @__PURE__ */ React.createElement("div", { className: "flex-1 min-w-0" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold text-sm truncate" }, product.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs", style: { color: C.textFaint } }, money(product.price), " / ", product.unit)), /* @__PURE__ */ React.createElement(QtyStepper, { qty, size: "sm", onInc: () => updateQty(product.id, 1), onDec: () => updateQty(product.id, -1) }), /* @__PURE__ */ React.createElement(IconBtn, { icon: Trash2, tone: "danger", size: 32, onClick: () => removeItem(product.id), label: "\u062D\u0630\u0641" }));
+      return /* @__PURE__ */ React.createElement("div", { key: product.id, className: "smk-fadeUp flex items-center gap-3 pb-3", style: { borderBottom: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement(ProductIcon, { Icon: product.icon, image: product.image, color: (_a = CATEGORIES.find((c) => c.id === product.cat)) == null ? void 0 : _a.color, size: "sm" }), /* @__PURE__ */ React.createElement("div", { className: "flex-1 min-w-0" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold text-sm truncate" }, product.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs", style: { color: C.textFaint } }, money(product.price), " / ", product.unit)), /* @__PURE__ */ React.createElement(QtyStepper, { qty, size: "sm", onInc: () => updateQty(product.id, 1), onDec: () => updateQty(product.id, -1) }), /* @__PURE__ */ React.createElement(IconBtn, { icon: Trash2, tone: "danger", size: 32, onClick: () => removeItem(product.id), label: "\u062D\u0630\u0641" }));
     }))
   );
 }
@@ -1140,17 +1140,38 @@ function LocationPicker({ location, setLocation, onAvailability }) {
 }
 function CheckoutStep3({ addr, setAddr, next, back }) {
   const [mapAvailable, setMapAvailable] = useState(true);
+  const isPickup = addr.method === "pickup";
   const distanceKm = addr.location ? haversineKm(addr.location.lat, addr.location.lng, STORE_LAT, STORE_LNG) : null;
-  const outOfRange = distanceKm !== null && distanceKm > MAX_DELIVERY_KM;
-  const valid = addr.city && (addr.location || !mapAvailable) && !outOfRange;
-  return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u062A\u0648\u0635\u064A\u0644"), /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0645\u062F\u064A\u0646\u0629 / \u0627\u0644\u0642\u0631\u064A\u0629" }, /* @__PURE__ */ React.createElement(
+  const outOfRange = !isPickup && distanceKm !== null && distanceKm > MAX_DELIVERY_KM;
+  const valid = isPickup || addr.city && (addr.location || !mapAvailable) && !outOfRange;
+  return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0637\u0631\u064A\u0642\u0629 \u0627\u0644\u0627\u0633\u062A\u0644\u0627\u0645"), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 gap-3 mb-5" }, /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      type: "button",
+      onClick: () => setAddr({ ...addr, method: "delivery" }),
+      className: "smk-focus rounded-2xl p-4 flex flex-col items-center gap-2 text-center",
+      style: { background: !isPickup ? C.primarySoft : C.surface, border: `1.5px solid ${!isPickup ? C.primary : C.borderSoft}` }
+    },
+    /* @__PURE__ */ React.createElement(Truck, { size: 22, color: !isPickup ? C.primary : C.textFaint }),
+    /* @__PURE__ */ React.createElement("span", { className: "font-bold text-sm", style: { color: !isPickup ? C.primary : C.text } }, "\u062A\u0648\u0635\u064A\u0644 \u0644\u0644\u0645\u0646\u0632\u0644")
+  ), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      type: "button",
+      onClick: () => setAddr({ ...addr, method: "pickup" }),
+      className: "smk-focus rounded-2xl p-4 flex flex-col items-center gap-2 text-center",
+      style: { background: isPickup ? C.primarySoft : C.surface, border: `1.5px solid ${isPickup ? C.primary : C.borderSoft}` }
+    },
+    /* @__PURE__ */ React.createElement(ShoppingBag, { size: 22, color: isPickup ? C.primary : C.textFaint }),
+    /* @__PURE__ */ React.createElement("span", { className: "font-bold text-sm", style: { color: isPickup ? C.primary : C.text } }, "\u0627\u0633\u062A\u0644\u0627\u0645 \u0645\u0646 \u0627\u0644\u0645\u062A\u062C\u0631")
+  )), isPickup ? /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-4 mb-5 flex items-start gap-2.5", style: { background: C.primarySoft } }, /* @__PURE__ */ React.createElement(ShoppingBag, { size: 18, color: C.primary, className: "shrink-0 mt-0.5" }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", { className: "font-bold text-sm", style: { color: C.primary } }, "\u0627\u0633\u062A\u0644\u0627\u0645 \u0645\u0646 \u0627\u0644\u0645\u062A\u062C\u0631 \u2014 \u0628\u062F\u0648\u0646 \u0631\u0633\u0648\u0645 \u062A\u0648\u0635\u064A\u0644"), /* @__PURE__ */ React.createElement("p", { className: "text-xs mt-0.5", style: { color: C.textSoft } }, "\u0628\u064A\u0635\u064A\u0631 \u0637\u0644\u0628\u0643 \u062C\u0627\u0647\u0632 \u0628\u0627\u0644\u0645\u062A\u062C\u0631\u060C \u0648\u0628\u062A\u0633\u062A\u0644\u0645\u0647 \u0628\u0646\u0641\u0633\u0643 \u0628\u062F\u0648\u0646 \u0645\u0627 \u0646\u062D\u062A\u0627\u062C \u0639\u0646\u0648\u0627\u0646\u0643 \u0623\u0648 \u0645\u0648\u0642\u0639\u0643."))) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Field, { label: "\u0627\u0644\u0645\u062F\u064A\u0646\u0629 / \u0627\u0644\u0642\u0631\u064A\u0629" }, /* @__PURE__ */ React.createElement(
     CitySearchSelect,
     {
       value: addr.city,
       onChangeText: (v) => setAddr({ ...addr, city: v }),
       onSelectLocality: (loc) => setAddr({ ...addr, city: loc.name, location: { lat: loc.lat, lng: loc.lng } })
     }
-  )), /* @__PURE__ */ React.createElement(Field, { label: "\u062A\u0641\u0627\u0635\u064A\u0644 \u0625\u0636\u0627\u0641\u064A\u0629" }, /* @__PURE__ */ React.createElement("textarea", { rows: 2, className: inputClass, style: inputStyle, value: addr.details, onChange: (e) => setAddr({ ...addr, details: e.target.value }), placeholder: "\u0623\u0642\u0631\u0628 \u0645\u0639\u0644\u0645\u060C \u0644\u0648\u0646 \u0627\u0644\u0628\u0646\u0627\u064A\u0629..." })), /* @__PURE__ */ React.createElement(LocationPicker, { location: addr.location, setLocation: (loc) => setAddr({ ...addr, location: loc }), onAvailability: setMapAvailable }), outOfRange && /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-4 mb-4 flex items-start gap-2.5", style: { background: C.dangerSoft } }, /* @__PURE__ */ React.createElement(AlertTriangle, { size: 18, color: C.danger, className: "shrink-0 mt-0.5" }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", { className: "font-bold text-sm", style: { color: C.danger } }, "\u0639\u0630\u0631\u064B\u0627\u060C \u0644\u0627 \u064A\u0648\u062C\u062F \u062A\u0648\u0635\u064A\u0644 \u0644\u0645\u0646\u0637\u0642\u062A\u0643"), /* @__PURE__ */ React.createElement("p", { className: "text-xs mt-0.5", style: { color: C.danger } }, "\u0645\u0648\u0642\u0639\u0643 \u064A\u0628\u0639\u062F ", distanceKm.toFixed(1), " \u0643\u0645 \u0639\u0646 \u0627\u0644\u0645\u062A\u062C\u0631\u060C \u0648\u0623\u0642\u0635\u0649 \u0645\u0633\u0627\u0641\u0629 \u0646\u063A\u0637\u064A\u0647\u0627 \u062D\u0627\u0644\u064A\u064B\u0627 ", MAX_DELIVERY_KM, " \u0643\u0645."))), /* @__PURE__ */ React.createElement(Field, { label: "\u0645\u0644\u0627\u062D\u0638\u0627\u062A \u0644\u0644\u0633\u0627\u0626\u0642" }, /* @__PURE__ */ React.createElement("textarea", { rows: 2, className: inputClass, style: inputStyle, value: addr.notes, onChange: (e) => setAddr({ ...addr, notes: e.target.value }), placeholder: "\u0627\u062E\u062A\u064A\u0627\u0631\u064A" })), /* @__PURE__ */ React.createElement("label", { className: "flex items-center gap-2 mb-5 text-sm font-bold cursor-pointer" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: addr.save, onChange: (e) => setAddr({ ...addr, save: e.target.checked }), className: "w-4 h-4" }), "\u062D\u0641\u0638 \u0647\u0630\u0627 \u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0644\u0637\u0644\u0628\u0627\u062A \u0642\u0627\u062F\u0645\u0629"), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3" }, /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, onClick: back }, "\u0631\u062C\u0648\u0639"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, disabled: !valid, onClick: next }, "\u0645\u062A\u0627\u0628\u0639\u0629")));
+  )), /* @__PURE__ */ React.createElement(Field, { label: "\u062A\u0641\u0627\u0635\u064A\u0644 \u0625\u0636\u0627\u0641\u064A\u0629" }, /* @__PURE__ */ React.createElement("textarea", { rows: 2, className: inputClass, style: inputStyle, value: addr.details, onChange: (e) => setAddr({ ...addr, details: e.target.value }), placeholder: "\u0623\u0642\u0631\u0628 \u0645\u0639\u0644\u0645\u060C \u0644\u0648\u0646 \u0627\u0644\u0628\u0646\u0627\u064A\u0629..." })), /* @__PURE__ */ React.createElement(LocationPicker, { location: addr.location, setLocation: (loc) => setAddr({ ...addr, location: loc }), onAvailability: setMapAvailable }), outOfRange && /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-4 mb-4 flex items-start gap-2.5", style: { background: C.dangerSoft } }, /* @__PURE__ */ React.createElement(AlertTriangle, { size: 18, color: C.danger, className: "shrink-0 mt-0.5" }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("p", { className: "font-bold text-sm", style: { color: C.danger } }, "\u0639\u0630\u0631\u064B\u0627\u060C \u0644\u0627 \u064A\u0648\u062C\u062F \u062A\u0648\u0635\u064A\u0644 \u0644\u0645\u0646\u0637\u0642\u062A\u0643"), /* @__PURE__ */ React.createElement("p", { className: "text-xs mt-0.5", style: { color: C.danger } }, "\u0645\u0648\u0642\u0639\u0643 \u064A\u0628\u0639\u062F ", distanceKm.toFixed(1), " \u0643\u0645 \u0639\u0646 \u0627\u0644\u0645\u062A\u062C\u0631\u060C \u0648\u0623\u0642\u0635\u0649 \u0645\u0633\u0627\u0641\u0629 \u0646\u063A\u0637\u064A\u0647\u0627 \u062D\u0627\u0644\u064A\u064B\u0627 ", MAX_DELIVERY_KM, " \u0643\u0645.")))), /* @__PURE__ */ React.createElement(Field, { label: "\u0645\u0644\u0627\u062D\u0638\u0627\u062A" }, /* @__PURE__ */ React.createElement("textarea", { rows: 2, className: inputClass, style: inputStyle, value: addr.notes, onChange: (e) => setAddr({ ...addr, notes: e.target.value }), placeholder: "\u0627\u062E\u062A\u064A\u0627\u0631\u064A" })), !isPickup && /* @__PURE__ */ React.createElement("label", { className: "flex items-center gap-2 mb-5 text-sm font-bold cursor-pointer" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: addr.save, onChange: (e) => setAddr({ ...addr, save: e.target.checked }), className: "w-4 h-4" }), "\u062D\u0641\u0638 \u0647\u0630\u0627 \u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0644\u0637\u0644\u0628\u0627\u062A \u0642\u0627\u062F\u0645\u0629"), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3" }, /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, onClick: back }, "\u0631\u062C\u0648\u0639"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, disabled: !valid, onClick: next }, "\u0645\u062A\u0627\u0628\u0639\u0629")));
 }
 function CheckoutStep4({ next, back }) {
   return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0637\u0631\u064A\u0642\u0629 \u0627\u0644\u062F\u0641\u0639"), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-5 flex items-center gap-4 mb-6", style: { background: C.primarySoft, border: `2px solid ${C.primary}` } }, /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl flex items-center justify-center shrink-0", style: { width: 52, height: 52, background: C.surface } }, /* @__PURE__ */ React.createElement(Banknote, { size: 24, color: C.primary })), /* @__PURE__ */ React.createElement("div", { className: "flex-1" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, CONTENT.paymentMethodTitle), /* @__PURE__ */ React.createElement("div", { className: "text-xs mt-0.5", style: { color: C.textSoft } }, CONTENT.paymentMethodDesc)), /* @__PURE__ */ React.createElement("div", { className: "rounded-full flex items-center justify-center", style: { width: 24, height: 24, background: C.primary } }, /* @__PURE__ */ React.createElement(Check, { size: 14, color: "#fff", strokeWidth: 3 }))), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3" }, /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, onClick: back }, "\u0631\u062C\u0648\u0639"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, onClick: next }, "\u0645\u062A\u0627\u0628\u0639\u0629")));
@@ -1158,9 +1179,10 @@ function CheckoutStep4({ next, back }) {
 function CheckoutStep5({ cart, form, addr, back, confirm, settingsReady }) {
   const items = Object.values(cart);
   const subtotal = items.reduce((s, i) => s + lineTotal(i.product, i.qty), 0);
-  const deliveryFee = computeDeliveryFee(addr.location);
+  const isPickup = addr.method === "pickup";
+  const deliveryFee = isPickup ? 0 : computeDeliveryFee(addr.location);
   const total = subtotal + deliveryFee;
-  return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0645\u0631\u0627\u062C\u0639\u0629 \u0627\u0644\u0637\u0644\u0628"), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-4 mb-4", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-col gap-2.5 mb-3" }, items.map(({ product, qty }) => /* @__PURE__ */ React.createElement("div", { key: product.id, className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", null, product.name, " ", /* @__PURE__ */ React.createElement("span", { style: { color: C.textFaint } }, "\xD7 ", qty)), /* @__PURE__ */ React.createElement("span", { className: "font-bold" }, money(lineTotal(product, qty)))))), /* @__PURE__ */ React.createElement("div", { className: "pt-3 flex flex-col gap-1.5", style: { borderTop: `1px dashed ${C.border}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { style: { color: C.textSoft } }, "\u0627\u0644\u0645\u062C\u0645\u0648\u0639 \u0627\u0644\u0641\u0631\u0639\u064A"), /* @__PURE__ */ React.createElement("span", null, money(subtotal))), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { style: { color: C.textSoft } }, "\u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644", addr.location ? " (\u062D\u0633\u0628 \u0627\u0644\u0645\u0633\u0627\u0641\u0629)" : ""), /* @__PURE__ */ React.createElement("span", null, money(deliveryFee))), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between font-bold text-base pt-1" }, /* @__PURE__ */ React.createElement("span", null, "\u0627\u0644\u0625\u062C\u0645\u0627\u0644\u064A"), /* @__PURE__ */ React.createElement("span", { style: { color: C.primary } }, money(total))))), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-4 mb-4 flex flex-col gap-2.5 text-sm", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(User, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, form.name)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Phone, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("bdi", null, form.code, " ", form.phone)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(MapPin, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, addr.city, addr.details ? ` - ${addr.details}` : "")), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Banknote, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, "\u0627\u0644\u062F\u0641\u0639 \u0639\u0646\u062F \u0627\u0644\u0627\u0633\u062A\u0644\u0627\u0645"))), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3" }, /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, onClick: back }, "\u0631\u062C\u0648\u0639"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, size: "lg", disabled: !settingsReady, onClick: confirm }, settingsReady ? CONTENT.orderConfirmButton : "...\u062C\u0627\u0631\u064D \u0627\u0644\u062A\u062D\u0645\u064A\u0644")));
+  return /* @__PURE__ */ React.createElement("div", { className: "max-w-md mx-auto smk-fadeUp" }, /* @__PURE__ */ React.createElement("h2", { className: "smk-display font-bold text-lg mb-5" }, "\u0645\u0631\u0627\u062C\u0639\u0629 \u0627\u0644\u0637\u0644\u0628"), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-4 mb-4", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-col gap-2.5 mb-3" }, items.map(({ product, qty }) => /* @__PURE__ */ React.createElement("div", { key: product.id, className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", null, product.name, " ", /* @__PURE__ */ React.createElement("span", { style: { color: C.textFaint } }, "\xD7 ", qty)), /* @__PURE__ */ React.createElement("span", { className: "font-bold" }, money(lineTotal(product, qty)))))), /* @__PURE__ */ React.createElement("div", { className: "pt-3 flex flex-col gap-1.5", style: { borderTop: `1px dashed ${C.border}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { style: { color: C.textSoft } }, "\u0627\u0644\u0645\u062C\u0645\u0648\u0639 \u0627\u0644\u0641\u0631\u0639\u064A"), /* @__PURE__ */ React.createElement("span", null, money(subtotal))), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between text-sm" }, /* @__PURE__ */ React.createElement("span", { style: { color: C.textSoft } }, isPickup ? "\u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644" : `\u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644${addr.location ? " (\u062D\u0633\u0628 \u0627\u0644\u0645\u0633\u0627\u0641\u0629)" : ""}`), /* @__PURE__ */ React.createElement("span", null, isPickup ? "\u0628\u062F\u0648\u0646 \u0631\u0633\u0648\u0645" : money(deliveryFee))), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between font-bold text-base pt-1" }, /* @__PURE__ */ React.createElement("span", null, "\u0627\u0644\u0625\u062C\u0645\u0627\u0644\u064A"), /* @__PURE__ */ React.createElement("span", { style: { color: C.primary } }, money(total))))), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-4 mb-4 flex flex-col gap-2.5 text-sm", style: { background: C.surface, border: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(User, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, form.name)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Phone, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("bdi", null, form.code, " ", form.phone)), isPickup ? /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(ShoppingBag, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, "\u0627\u0633\u062A\u0644\u0627\u0645 \u0645\u0646 \u0627\u0644\u0645\u062A\u062C\u0631")) : /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(MapPin, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, addr.city, addr.details ? ` - ${addr.details}` : "")), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Banknote, { size: 15, color: C.textFaint }), /* @__PURE__ */ React.createElement("span", null, "\u0627\u0644\u062F\u0641\u0639 \u0639\u0646\u062F \u0627\u0644\u0627\u0633\u062A\u0644\u0627\u0645"))), /* @__PURE__ */ React.createElement("div", { className: "rounded-2xl p-3.5 mb-4 flex items-start gap-2.5", style: { background: C.warnSoft } }, /* @__PURE__ */ React.createElement(AlertTriangle, { size: 16, color: C.warn, className: "shrink-0 mt-0.5" }), /* @__PURE__ */ React.createElement("p", { className: "text-xs font-bold", style: { color: C.warn } }, "\u0644\u0627 \u064A\u0645\u0643\u0646 \u0625\u0644\u063A\u0627\u0621 \u0627\u0644\u0637\u0644\u0628 \u0628\u0639\u062F \u0625\u0631\u0633\u0627\u0644\u0647\u060C \u062A\u0623\u0643\u062F \u0645\u0646 \u0635\u062D\u0629 \u0627\u0644\u062A\u0641\u0627\u0635\u064A\u0644 \u0642\u0628\u0644 \u0627\u0644\u062A\u0623\u0643\u064A\u062F.")), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3" }, /* @__PURE__ */ React.createElement(Btn, { variant: "ghost", full: true, onClick: back }, "\u0631\u062C\u0648\u0639"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", full: true, size: "lg", disabled: !settingsReady, onClick: confirm }, settingsReady ? CONTENT.orderConfirmButton : "...\u062C\u0627\u0631\u064D \u0627\u0644\u062A\u062D\u0645\u064A\u0644")));
 }
 function CheckoutFlow({ step, setStep, cart, form, setForm, addr, setAddr, confirm, settingsReady }) {
   return /* @__PURE__ */ React.createElement("div", { className: "px-4 md:px-6 py-8 pb-10" }, /* @__PURE__ */ React.createElement(Stepper, { step }), step === 1 && /* @__PURE__ */ React.createElement(CheckoutStep1, { form, setForm, next: () => setStep(2) }), step === 2 && /* @__PURE__ */ React.createElement(CheckoutStep3, { addr, setAddr, next: () => setStep(3), back: () => setStep(1) }), step === 3 && /* @__PURE__ */ React.createElement(CheckoutStep4, { next: () => setStep(4), back: () => setStep(2) }), step === 4 && /* @__PURE__ */ React.createElement(CheckoutStep5, { cart, form, addr, back: () => setStep(3), confirm, settingsReady }));
@@ -1311,9 +1333,9 @@ function App() {
   const [addr, setAddr] = useState(() => {
     try {
       const saved = JSON.parse(window.localStorage.getItem("smk_customer_profile") || "null");
-      return (saved == null ? void 0 : saved.addr) || { city: "", details: "", notes: "", save: false, location: null };
+      return (saved == null ? void 0 : saved.addr) || { method: "delivery", city: "", details: "", notes: "", save: false, location: null };
     } catch (e) {
-      return { city: "", details: "", notes: "", save: false, location: null };
+      return { method: "delivery", city: "", details: "", notes: "", save: false, location: null };
     }
   });
   const [customerPhone, setCustomerPhone] = useState(() => {
@@ -1362,12 +1384,36 @@ function App() {
     setToasts((t) => [...t, { id, msg, tone }]);
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 2600);
   };
+  const authUserRef = useRef(authUser);
+  useEffect(() => {
+    authUserRef.current = authUser;
+  }, [authUser]);
   const handleGoogleSignIn = () => {
     setSigningIn(true);
+    try {
+      window.localStorage.setItem("smk_google_signin_attempt", "1");
+    } catch (e) {
+    }
     signInWithGoogle().then(() => {
       setSigningIn(false);
+      setTimeout(() => {
+        if (!authUserRef.current) {
+          try {
+            const still = window.localStorage.getItem("smk_google_signin_attempt") === "1";
+            if (still) {
+              showToast('\u062A\u0639\u0630\u0651\u0631 \u0625\u0643\u0645\u0627\u0644 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u2014 \u0639\u0644\u0649 \u0627\u0644\u0623\u063A\u0644\u0628 \u0645\u062A\u0635\u0641\u062D\u0643 \u064A\u062D\u0638\u0631 \u0627\u0644\u0627\u062A\u0635\u0627\u0644 \u0628\u064A\u0646 \u0627\u0644\u0645\u0648\u0627\u0642\u0639. \u062C\u0631\u0651\u0628: \u0623\u0648\u0642\u0641 "\u0645\u0646\u0639 \u062A\u062A\u0628\u0651\u0639 \u0627\u0644\u0645\u0648\u0627\u0642\u0639" \u0645\u0646 \u0625\u0639\u062F\u0627\u062F\u0627\u062A \u0627\u0644\u0645\u062A\u0635\u0641\u062D \u0645\u0624\u0642\u062A\u064B\u0627\u060C \u0623\u0648 \u062C\u0631\u0651\u0628 \u0645\u062A\u0635\u0641\u062D Chrome \u0628\u062F\u0644 Safari', "danger");
+              window.localStorage.removeItem("smk_google_signin_attempt");
+            }
+          } catch (e) {
+          }
+        }
+      }, 2e3);
     }).catch((err) => {
       setSigningIn(false);
+      try {
+        window.localStorage.removeItem("smk_google_signin_attempt");
+      } catch (e) {
+      }
       showToast(googleSignInErrorMessage(err), "danger");
     });
   };
@@ -1375,11 +1421,38 @@ function App() {
     signOutUser();
     showToast("\u062A\u0645 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062E\u0631\u0648\u062C");
   };
+  useEffect(() => {
+    if (!authReady) return;
+    let hadAttempt = false;
+    try {
+      hadAttempt = window.localStorage.getItem("smk_google_signin_attempt") === "1";
+    } catch (e) {
+    }
+    if (!hadAttempt) return;
+    if (authUser) {
+      try {
+        window.localStorage.removeItem("smk_google_signin_attempt");
+      } catch (e) {
+      }
+      return;
+    }
+    if (!redirectAuthError) {
+      showToast('\u062A\u0639\u0630\u0651\u0631 \u0625\u0643\u0645\u0627\u0644 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u2014 \u0639\u0644\u0649 \u0627\u0644\u0623\u063A\u0644\u0628 \u0645\u062A\u0635\u0641\u062D\u0643 \u064A\u062D\u0638\u0631 \u0627\u0644\u0627\u062A\u0635\u0627\u0644 \u0628\u064A\u0646 \u0627\u0644\u0645\u0648\u0627\u0642\u0639. \u062C\u0631\u0651\u0628: \u0623\u0648\u0642\u0641 "\u0645\u0646\u0639 \u062A\u062A\u0628\u0651\u0639 \u0627\u0644\u0645\u0648\u0627\u0642\u0639" \u0645\u0646 \u0625\u0639\u062F\u0627\u062F\u0627\u062A \u0627\u0644\u0645\u062A\u0635\u0641\u062D \u0645\u0624\u0642\u062A\u064B\u0627\u060C \u0623\u0648 \u062C\u0631\u0651\u0628 \u0645\u062A\u0635\u0641\u062D Chrome \u0628\u062F\u0644 Safari', "danger");
+    }
+    try {
+      window.localStorage.removeItem("smk_google_signin_attempt");
+    } catch (e) {
+    }
+  }, [authReady, authUser, redirectAuthError]);
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
   const [pendingCheckout, setPendingCheckout] = useState(false);
   const prevAuthUserRef = useRef(null);
   useEffect(() => {
     if (authUser && !prevAuthUserRef.current) {
+      try {
+        window.localStorage.removeItem("smk_google_signin_attempt");
+      } catch (e) {
+      }
       showToast("\u062A\u0645 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u0628\u0646\u062C\u0627\u062D");
       setShowRequireSignIn(false);
       if (!form.name || !form.phone) {
@@ -1455,8 +1528,9 @@ function App() {
   const confirmOrder = () => {
     const subtotal = Object.values(cart).reduce((s, i) => s + lineTotal(i.product, i.qty), 0);
     const phone = `${form.code}${form.phone}`;
-    const deliveryFee = computeDeliveryFee(addr.location);
-    const distanceKm = addr.location ? haversineKm(addr.location.lat, addr.location.lng, STORE_LAT, STORE_LNG) : null;
+    const isPickup = addr.method === "pickup";
+    const deliveryFee = isPickup ? 0 : computeDeliveryFee(addr.location);
+    const distanceKm = !isPickup && addr.location ? haversineKm(addr.location.lat, addr.location.lng, STORE_LAT, STORE_LNG) : null;
     const items = Object.values(cart).map(({ product, qty }) => ({
       id: product.id,
       name: product.name,
@@ -1477,9 +1551,10 @@ function App() {
         status: "\u062C\u062F\u064A\u062F",
         customer: form.name,
         phone,
-        address: `${addr.city}${addr.details ? " - " + addr.details : ""}`,
+        deliveryMethod: isPickup ? "pickup" : "delivery",
+        address: isPickup ? "\u0627\u0633\u062A\u0644\u0627\u0645 \u0645\u0646 \u0627\u0644\u0645\u062A\u062C\u0631" : `${addr.city}${addr.details ? " - " + addr.details : ""}`,
         notes: addr.notes,
-        location: addr.location || null,
+        location: isPickup ? null : addr.location || null,
         items
       };
       setOrders((o) => [newOrder, ...o]);
