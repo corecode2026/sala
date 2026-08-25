@@ -326,15 +326,11 @@ function signInWithGoogle() {
   const auth = getAuth();
   if (!auth) return Promise.reject({ code: "auth-unavailable" });
   const provider = new window.firebase.auth.GoogleAuthProvider();
-  const persistence = window.firebase.auth.Auth && window.firebase.auth.Auth.Persistence ? window.firebase.auth.Auth.Persistence.SESSION : "session";
-  return auth.setPersistence(persistence).catch(() => {
-  }).then(() => {
-    return auth.signInWithPopup(provider).catch((err) => {
-      if (err && (err.code === "auth/popup-blocked" || err.code === "auth/popup-closed-by-user" || err.code === "auth/cancelled-popup-request" || err.code === "auth/operation-not-supported-in-this-environment")) {
-        return auth.signInWithRedirect(provider);
-      }
-      throw err;
-    });
+  return auth.signInWithPopup(provider).catch((err) => {
+    if (err && (err.code === "auth/popup-blocked" || err.code === "auth/popup-closed-by-user" || err.code === "auth/cancelled-popup-request" || err.code === "auth/operation-not-supported-in-this-environment")) {
+      return auth.signInWithRedirect(provider);
+    }
+    throw err;
   });
 }
 function googleSignInErrorMessage(err) {
