@@ -14,9 +14,16 @@
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('firebase-messaging-sw.js').catch(function () {});
+    navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.page.js" defer></script>
+<script>
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+OneSignalDeferred.push(function (OneSignal) {
+  OneSignal.init({ appId: "ONESIGNAL_APP_ID_PLACEHOLDER" }).catch(function () {});
+});
 </script>
 <style>html,body{margin:0;padding:0;min-height:100%;font-family:sans-serif;overflow-x:hidden;max-width:100vw;}#root{min-height:100vh;}
 .smk-loading{display:flex;align-items:center;justify-content:center;min-height:100vh;color:#6F6D64;font-size:14px;}
@@ -65,11 +72,6 @@ if ('serviceWorker' in navigator) {
     'https://cdnjs.cloudflare.com/ajax/libs/firebase/10.13.2/firebase-auth-compat.js',
     'https://cdn.jsdelivr.net/npm/firebase@10.13.2/firebase-auth-compat.js'
   ];
-  var FIREBASE_MESSAGING_SOURCES = [
-    'https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/firebase/10.13.2/firebase-messaging-compat.js',
-    'https://cdn.jsdelivr.net/npm/firebase@10.13.2/firebase-messaging-compat.js'
-  ];
   var LEAFLET_SOURCES = [
     'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
     'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js',
@@ -86,9 +88,7 @@ if ('serviceWorker' in navigator) {
       tryLoad(FIREBASE_APP_SOURCES, 0, function () {
         tryLoad(FIREBASE_FIRESTORE_SOURCES, 0, function () {
           tryLoad(FIREBASE_AUTH_SOURCES, 0, function () {
-            tryLoad(FIREBASE_MESSAGING_SOURCES, 0, function () {
-              tryLoad(LEAFLET_SOURCES, 0, proceed, proceed);
-            }, function () { tryLoad(LEAFLET_SOURCES, 0, proceed, proceed); });
+            tryLoad(LEAFLET_SOURCES, 0, proceed, proceed);
           }, function () { tryLoad(LEAFLET_SOURCES, 0, proceed, proceed); });
         }, proceedWithoutFirebase);
       }, proceedWithoutFirebase);
@@ -298,7 +298,6 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "358419771624",
   appId: "1:358419771624:web:4ef1a248152285af76595d"
 };
-const FCM_VAPID_KEY = "BLETM4mOjzljlVZGdFADCg-Axlj8aPkdDxDpq_3gCDFruhlZOPP8mqF8eJ4_YJD3Hg4KvcLMxzfRe9Ocnx-j4oE";
 let _dbInstance = null;
 function getDb() {
   if (_dbInstance) return _dbInstance;
@@ -355,21 +354,16 @@ function signOutUser() {
   if (auth) return auth.signOut();
   return Promise.resolve();
 }
-function requestNotificationToken() {
-  if (typeof window === "undefined" || !window.firebase || !window.firebase.messaging || !("Notification" in window)) {
-    return Promise.resolve(null);
-  }
-  if (!FCM_VAPID_KEY) return Promise.resolve(null);
-  return Notification.requestPermission().then((permission) => {
-    if (permission !== "granted") return null;
-    try {
-      getDb();
-      const messaging = window.firebase.messaging();
-      return messaging.getToken({ vapidKey: FCM_VAPID_KEY }).catch(() => null);
-    } catch (e) {
-      return null;
+function registerForOrderNotifications(phone) {
+  if (typeof window === "undefined" || !window.OneSignalDeferred || !phone) return;
+  window.OneSignalDeferred.push(function(OneSignal) {
+    OneSignal.login(phone).catch(function() {
+    });
+    if (OneSignal.Notifications && typeof OneSignal.Notifications.requestPermission === "function") {
+      OneSignal.Notifications.requestPermission().catch(function() {
+      });
     }
-  }).catch(() => null);
+  });
 }
 function useAuthUser() {
   const [user, setUser] = useState(null);
@@ -1159,7 +1153,7 @@ function LocationPicker({ location, setLocation, onAvailability }) {
       else setLocateError("\u062A\u0639\u0630\u0651\u0631 \u062A\u062D\u062F\u064A\u062F \u0645\u0648\u0642\u0639\u0643 \u2014 \u062A\u0623\u0643\u062F \u0645\u0646 \u062A\u0641\u0639\u064A\u0644 \u062E\u062F\u0645\u0629 \u0627\u0644\u0645\u0648\u0642\u0639 \u0648\u062D\u0627\u0648\u0644 \u0645\u062C\u062F\u062F\u064B\u0627");
     }, { enableHighAccuracy: true, timeout: 1e4 });
   };
-  return /* @__PURE__ */ React.createElement("div", { className: "mb-4" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-2" }, /* @__PURE__ */ React.createElement("span", { className: "text-sm font-bold" }, "\u0645\u0648\u0642\u0639\u0643 ", /* @__PURE__ */ React.createElement("span", { style: { color: C.danger } }, "*")), location && /* @__PURE__ */ React.createElement("span", { className: "text-xs font-bold flex items-center gap-1", style: { color: C.success } }, /* @__PURE__ */ React.createElement(CheckCircle2, { size: 13 }), " \u062A\u0645 \u0627\u0644\u062A\u062D\u062F\u064A\u062F")), leafletReady ? /* @__PURE__ */ React.createElement("div", { className: "relative" }, /* @__PURE__ */ React.createElement("div", { ref: mapRef, style: { height: 220, borderRadius: 18, overflow: "hidden", border: `1.5px solid ${location ? C.success : C.borderSoft}` } }), /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { className: "mb-4" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-2" }, /* @__PURE__ */ React.createElement("span", { className: "text-sm font-bold" }, "\u0645\u0648\u0642\u0639\u0643 ", /* @__PURE__ */ React.createElement("span", { style: { color: C.danger } }, "*")), location && /* @__PURE__ */ React.createElement("span", { className: "text-xs font-bold flex items-center gap-1", style: { color: C.success } }, /* @__PURE__ */ React.createElement(CheckCircle2, { size: 13 }), " \u062A\u0645 \u0627\u0644\u062A\u062D\u062F\u064A\u062F")), leafletReady ? /* @__PURE__ */ React.createElement("div", { className: "relative", style: { position: "relative" } }, /* @__PURE__ */ React.createElement("div", { ref: mapRef, style: { height: 220, borderRadius: 18, overflow: "hidden", border: `1.5px solid ${location ? C.success : C.borderSoft}` } }), /* @__PURE__ */ React.createElement(
     "button",
     {
       type: "button",
@@ -1172,6 +1166,7 @@ function LocationPicker({ location, setLocation, onAvailability }) {
         left: 12,
         width: 46,
         height: 46,
+        zIndex: 1e3,
         background: "rgba(255,255,255,0.55)",
         backdropFilter: "blur(10px) saturate(180%)",
         WebkitBackdropFilter: "blur(10px) saturate(180%)",
@@ -1635,37 +1630,35 @@ function App() {
       lineTotal: lineTotal(product, qty)
     }));
     getNextOrderNumber().then((orderId) => {
-      requestNotificationToken().then((fcmToken) => {
-        const newOrder = {
-          id: orderId,
-          date: "\u0627\u0644\u064A\u0648\u0645",
-          amount: subtotal + deliveryFee,
-          count: cartCount,
-          deliveryFee,
-          distanceKm,
-          status: "\u062C\u062F\u064A\u062F",
-          customer: form.name,
-          phone,
-          deliveryMethod: isPickup ? "pickup" : "delivery",
-          address: isPickup ? "\u0627\u0633\u062A\u0644\u0627\u0645 \u0645\u0646 \u0627\u0644\u0645\u062A\u062C\u0631" : `${addr.city}${addr.details ? " - " + addr.details : ""}`,
-          notes: addr.notes,
-          location: isPickup ? null : addr.location || null,
-          items,
-          fcmToken: fcmToken || null
-        };
-        setOrders((o) => [newOrder, ...o]);
-        addOrderRecord(newOrder, () => showToast("\u062A\u0639\u0630\u0651\u0631\u062A \u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u0637\u0644\u0628 \u0645\u0639 \u0627\u0644\u062E\u0627\u062F\u0645 \u2014 \u062A\u0623\u0643\u062F \u0645\u0646 \u0625\u0639\u062F\u0627\u062F\u0627\u062A Firebase", "danger"));
-        recordPopularity(items);
-        try {
-          window.localStorage.setItem("smk_customer_phone", phone);
-          window.localStorage.setItem("smk_customer_profile", JSON.stringify({ form, addr }));
-        } catch (e) {
-        }
-        setCustomerPhone(phone);
-        setLastOrder(newOrder);
-        setCart({});
-        setView("success");
-      });
+      const newOrder = {
+        id: orderId,
+        date: "\u0627\u0644\u064A\u0648\u0645",
+        amount: subtotal + deliveryFee,
+        count: cartCount,
+        deliveryFee,
+        distanceKm,
+        status: "\u062C\u062F\u064A\u062F",
+        customer: form.name,
+        phone,
+        deliveryMethod: isPickup ? "pickup" : "delivery",
+        address: isPickup ? "\u0627\u0633\u062A\u0644\u0627\u0645 \u0645\u0646 \u0627\u0644\u0645\u062A\u062C\u0631" : `${addr.city}${addr.details ? " - " + addr.details : ""}`,
+        notes: addr.notes,
+        location: isPickup ? null : addr.location || null,
+        items
+      };
+      setOrders((o) => [newOrder, ...o]);
+      addOrderRecord(newOrder, () => showToast("\u062A\u0639\u0630\u0651\u0631\u062A \u0645\u0632\u0627\u0645\u0646\u0629 \u0627\u0644\u0637\u0644\u0628 \u0645\u0639 \u0627\u0644\u062E\u0627\u062F\u0645 \u2014 \u062A\u0623\u0643\u062F \u0645\u0646 \u0625\u0639\u062F\u0627\u062F\u0627\u062A Firebase", "danger"));
+      recordPopularity(items);
+      registerForOrderNotifications(phone);
+      try {
+        window.localStorage.setItem("smk_customer_phone", phone);
+        window.localStorage.setItem("smk_customer_profile", JSON.stringify({ form, addr }));
+      } catch (e) {
+      }
+      setCustomerPhone(phone);
+      setLastOrder(newOrder);
+      setCart({});
+      setView("success");
     });
   };
   const handleNavLink = (key) => {
