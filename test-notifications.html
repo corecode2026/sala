@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>اختبار الإشعارات</title>
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#173C33" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.page.js" defer></script>
+<script>
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+OneSignalDeferred.push(function (OneSignal) {
+  OneSignal.init({ appId: "e1fc509b-7a14-438e-8e89-bc4b066817fd" });
+});
+</script>
+<style>
+  body { font-family: sans-serif; padding: 24px; text-align: center; background: #F6F4EE; }
+  button { font-size: 18px; padding: 16px 32px; border-radius: 12px; border: none; background: #173C33; color: white; margin-top: 20px; }
+  #log { margin-top: 24px; text-align: right; background: white; padding: 16px; border-radius: 12px; white-space: pre-wrap; font-size: 13px; direction: ltr; text-align: left; }
+</style>
+</head>
+<body>
+  <h2>اختبار إشعارات OneSignal</h2>
+  <p>هاي صفحة اختبار بسيطة بس، منفصلة عن الموقع الكامل.</p>
+  <button onclick="testNotif()">اضغط هون لطلب إذن الإشعارات</button>
+  <div id="log">جاهز...</div>
+  <script>
+    function log(msg) {
+      document.getElementById('log').textContent += '\n' + msg;
+    }
+    function testNotif() {
+      log('تم الضغط على الزر...');
+      if (!window.OneSignalDeferred) {
+        log('خطأ: OneSignalDeferred غير موجود إطلاقًا!');
+        return;
+      }
+      log('OneSignalDeferred موجود، جاري الطلب...');
+      window.OneSignalDeferred.push(function (OneSignal) {
+        log('تم الوصول لكائن OneSignal بنجاح.');
+        if (!OneSignal.Notifications) {
+          log('خطأ: OneSignal.Notifications غير متوفر!');
+          return;
+        }
+        OneSignal.Notifications.requestPermission().then(function (result) {
+          log('نتيجة الطلب: ' + JSON.stringify(result));
+        }).catch(function (err) {
+          log('خطأ أثناء الطلب: ' + (err && err.message ? err.message : JSON.stringify(err)));
+        });
+      });
+    }
+    window.addEventListener('error', function (e) {
+      log('خطأ عام بالصفحة: ' + e.message);
+    });
+  </script>
+</body>
+</html>
