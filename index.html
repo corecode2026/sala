@@ -389,6 +389,17 @@ function useAuthUser() {
   }, []);
   return [user, authReady, redirectError];
 }
+function saveCustomerProfileToCloud(uid, data) {
+  const database = getDb();
+  if (!database || !uid) return;
+  database.collection("customers").doc(uid).set(data, { merge: true }).catch(() => {
+  });
+}
+function loadCustomerProfileFromCloud(uid) {
+  const database = getDb();
+  if (!database || !uid) return Promise.resolve(null);
+  return database.collection("customers").doc(uid).get().then((doc) => doc.exists ? doc.data() : null).catch(() => null);
+}
 const DEFAULT_CATEGORIES = [];
 const DEFAULT_PRODUCTS = [];
 let CATEGORIES = DEFAULT_CATEGORIES;
@@ -1304,6 +1315,7 @@ function AccountScreen({ setView, form, setForm, addr, setAddr, showToast, authU
       window.localStorage.setItem("smk_customer_profile", JSON.stringify({ ...current, form: draft }));
     } catch (e) {
     }
+    if (authUser) saveCustomerProfileToCloud(authUser.uid, { form: draft });
     setEditing(false);
     showToast("\u062A\u0645 \u062D\u0641\u0638 \u0628\u064A\u0627\u0646\u0627\u062A\u0643");
   };
@@ -1314,6 +1326,7 @@ function AccountScreen({ setView, form, setForm, addr, setAddr, showToast, authU
       window.localStorage.setItem("smk_customer_profile", JSON.stringify({ ...current, addr: newAddr }));
     } catch (e) {
     }
+    if (authUser) saveCustomerProfileToCloud(authUser.uid, { addr: newAddr });
     setEditingAddr(false);
     showToast("\u062A\u0645 \u062D\u0641\u0638 \u0627\u0644\u0639\u0646\u0648\u0627\u0646");
   };
@@ -1325,6 +1338,7 @@ function AccountScreen({ setView, form, setForm, addr, setAddr, showToast, authU
       window.localStorage.setItem("smk_customer_profile", JSON.stringify({ ...current, addr: cleared }));
     } catch (e) {
     }
+    if (authUser) saveCustomerProfileToCloud(authUser.uid, { addr: cleared });
     showToast("\u062A\u0645 \u062D\u0630\u0641 \u0627\u0644\u0639\u0646\u0648\u0627\u0646");
   };
   const hasProfile = form.name || form.phone;
@@ -1549,13 +1563,27 @@ function App() {
       }
       showToast("\u062A\u0645 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u0628\u0646\u062C\u0627\u062D");
       setShowRequireSignIn(false);
-      if (!form.name || !form.phone) {
-        setShowCompleteProfile(true);
-      } else if (pendingCheckout) {
-        setPendingCheckout(false);
-        setCheckoutStep(1);
-        setView("checkout");
-      }
+      loadCustomerProfileFromCloud(authUser.uid).then((cloudData) => {
+        if (cloudData && cloudData.form && cloudData.form.name && cloudData.form.phone) {
+          setForm((f) => ({ ...f, ...cloudData.form }));
+          if (cloudData.addr) setAddr((a) => ({ ...a, ...cloudData.addr }));
+          try {
+            window.localStorage.setItem("smk_customer_profile", JSON.stringify({ form: cloudData.form, addr: cloudData.addr || null }));
+          } catch (e) {
+          }
+          if (pendingCheckout) {
+            setPendingCheckout(false);
+            setCheckoutStep(1);
+            setView("checkout");
+          }
+        } else if (!form.name || !form.phone) {
+          setShowCompleteProfile(true);
+        } else if (pendingCheckout) {
+          setPendingCheckout(false);
+          setCheckoutStep(1);
+          setView("checkout");
+        }
+      });
     }
     prevAuthUserRef.current = authUser;
   }, [authUser]);
@@ -1566,6 +1594,7 @@ function App() {
       window.localStorage.setItem("smk_customer_profile", JSON.stringify({ ...current, form: { name, code, phone } }));
     } catch (e) {
     }
+    if (authUser) saveCustomerProfileToCloud(authUser.uid, { form: { name, code, phone } });
     setShowCompleteProfile(false);
     showToast("\u062A\u0645 \u062D\u0641\u0638 \u0628\u064A\u0627\u0646\u0627\u062A\u0643");
     if (pendingCheckout) {
@@ -1661,6 +1690,7 @@ function App() {
         window.localStorage.setItem("smk_customer_profile", JSON.stringify({ form, addr }));
       } catch (e) {
       }
+      if (authUser) saveCustomerProfileToCloud(authUser.uid, { form, addr });
       setCustomerPhone(phone);
       setLastOrder(newOrder);
       setCart({});
