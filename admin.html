@@ -927,18 +927,59 @@ function AdminProducts({ products, productOps }) {
     productOps.remove(toDelete.id);
     setToDelete(null);
   };
-  const move = (i, dir) => {
-    const j = i + dir;
-    if (j < 0 || j >= products.length) return;
-    const a = products[i], b = products[j];
-    const orderA = typeof a.order === "number" ? a.order : i;
-    const orderB = typeof b.order === "number" ? b.order : j;
-    productOps.update(a.id, { order: orderB });
-    productOps.update(b.id, { order: orderA });
+  const [dragIndex, setDragIndex] = useState(null);
+  const [overIndex, setOverIndex] = useState(null);
+  const handleDrop = (dropIndex) => {
+    if (dragIndex === null || dragIndex === dropIndex) {
+      setDragIndex(null);
+      setOverIndex(null);
+      return;
+    }
+    const reordered = [...products];
+    const [moved] = reordered.splice(dragIndex, 1);
+    reordered.splice(dropIndex, 0, moved);
+    reordered.forEach((p, i) => {
+      const currentOrder = typeof p.order === "number" ? p.order : -1;
+      if (currentOrder !== i) productOps.update(p.id, { order: i });
+    });
+    setDragIndex(null);
+    setOverIndex(null);
   };
-  return /* @__PURE__ */ React.createElement("div", { className: "p-5 md:p-8" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-5" }, /* @__PURE__ */ React.createElement("p", { className: "text-sm", style: { color: C.textSoft } }, products.length, " \u0645\u0646\u062A\u062C \u0625\u062C\u0645\u0627\u0644\u064B\u0627"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", icon: Plus, onClick: openNew }, "\u0625\u0636\u0627\u0641\u0629 \u0645\u0646\u062A\u062C")), /* @__PURE__ */ React.createElement(Table, { columns: ["\u062A\u0631\u062A\u064A\u0628", "\u0635\u0648\u0631\u0629", "\u0627\u0644\u0627\u0633\u0645", "\u0627\u0644\u062A\u0635\u0646\u064A\u0641", "\u0627\u0644\u0633\u0639\u0631", "\u0627\u0644\u0639\u0631\u0636", "\u0627\u0644\u0625\u062C\u0631\u0627\u0621\u0627\u062A"] }, products.map((p, i) => {
+  return /* @__PURE__ */ React.createElement("div", { className: "p-5 md:p-8" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-5" }, /* @__PURE__ */ React.createElement("p", { className: "text-sm", style: { color: C.textSoft } }, products.length, " \u0645\u0646\u062A\u062C \u0625\u062C\u0645\u0627\u0644\u064B\u0627 \u2014 \u0627\u0633\u062D\u0628 \u0623\u064A \u0635\u0641 \u0645\u0646 \u0645\u0642\u0628\u0636 \u283F \u0644\u062A\u0631\u062A\u064A\u0628\u0647 \u0628\u0623\u064A \u0645\u0643\u0627\u0646"), /* @__PURE__ */ React.createElement(Btn, { variant: "primary", icon: Plus, onClick: openNew }, "\u0625\u0636\u0627\u0641\u0629 \u0645\u0646\u062A\u062C")), /* @__PURE__ */ React.createElement(Table, { columns: ["\u283F", "\u0635\u0648\u0631\u0629", "\u0627\u0644\u0627\u0633\u0645", "\u0627\u0644\u062A\u0635\u0646\u064A\u0641", "\u0627\u0644\u0633\u0639\u0631", "\u0627\u0644\u0639\u0631\u0636", "\u0627\u0644\u0625\u062C\u0631\u0627\u0621\u0627\u062A"] }, products.map((p, i) => {
     const cat = CATEGORIES.find((c) => c.id === p.cat);
-    return /* @__PURE__ */ React.createElement("tr", { key: p.id, style: { borderTop: `1px solid ${C.borderSoft}` } }, /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-col", style: { color: C.textFaint } }, /* @__PURE__ */ React.createElement("button", { onClick: () => move(i, -1), className: "smk-focus" }, /* @__PURE__ */ React.createElement(ChevronDown, { size: 14, className: "rotate-180" })), /* @__PURE__ */ React.createElement("button", { onClick: () => move(i, 1), className: "smk-focus" }, /* @__PURE__ */ React.createElement(ChevronDown, { size: 14 })))), /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3" }, p.image ? /* @__PURE__ */ React.createElement("img", { src: p.image, alt: "", style: { width: 36, height: 36, borderRadius: 10, objectFit: "cover" } }) : /* @__PURE__ */ React.createElement(ProductIcon, { Icon: p.icon, color: cat == null ? void 0 : cat.color, size: "sm" })), /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3 font-bold whitespace-nowrap" }, p.name), /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3 whitespace-nowrap", style: { color: C.textSoft } }, cat == null ? void 0 : cat.name), /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3 font-bold whitespace-nowrap" }, money(p.price)), /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3 whitespace-nowrap" }, p.deal ? /* @__PURE__ */ React.createElement(Badge, { bg: C.dangerSoft, fg: C.danger }, p.deal.qty, " \u0628\u0640 ", money(p.deal.price)) : /* @__PURE__ */ React.createElement("span", { style: { color: C.textFaint } }, "\u2014")), /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5" }, /* @__PURE__ */ React.createElement(IconBtn, { icon: Eye, size: 32 }), /* @__PURE__ */ React.createElement(IconBtn, { icon: Pencil, size: 32, onClick: () => openEdit(p) }), /* @__PURE__ */ React.createElement(IconBtn, { icon: Trash2, tone: "danger", size: 32, onClick: () => setToDelete(p) }))));
+    return /* @__PURE__ */ React.createElement(
+      "tr",
+      {
+        key: p.id,
+        draggable: true,
+        onDragStart: () => setDragIndex(i),
+        onDragOver: (e) => {
+          e.preventDefault();
+          if (overIndex !== i) setOverIndex(i);
+        },
+        onDragEnd: () => {
+          setDragIndex(null);
+          setOverIndex(null);
+        },
+        onDrop: (e) => {
+          e.preventDefault();
+          handleDrop(i);
+        },
+        style: {
+          borderTop: `1px solid ${C.borderSoft}`,
+          background: overIndex === i && dragIndex !== null && dragIndex !== i ? C.primarySoft : void 0,
+          opacity: dragIndex === i ? 0.4 : 1,
+          cursor: "grab"
+        }
+      },
+      /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3", style: { color: C.textFaint, fontSize: 18, userSelect: "none" } }, "\u283F"),
+      /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3" }, p.image ? /* @__PURE__ */ React.createElement("img", { src: p.image, alt: "", style: { width: 36, height: 36, borderRadius: 10, objectFit: "cover" } }) : /* @__PURE__ */ React.createElement(ProductIcon, { Icon: p.icon, color: cat == null ? void 0 : cat.color, size: "sm" })),
+      /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3 font-bold whitespace-nowrap" }, p.name),
+      /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3 whitespace-nowrap", style: { color: C.textSoft } }, cat == null ? void 0 : cat.name),
+      /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3 font-bold whitespace-nowrap" }, money(p.price)),
+      /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3 whitespace-nowrap" }, p.deal ? /* @__PURE__ */ React.createElement(Badge, { bg: C.dangerSoft, fg: C.danger }, p.deal.qty, " \u0628\u0640 ", money(p.deal.price)) : /* @__PURE__ */ React.createElement("span", { style: { color: C.textFaint } }, "\u2014")),
+      /* @__PURE__ */ React.createElement("td", { className: "px-4 py-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5" }, /* @__PURE__ */ React.createElement(IconBtn, { icon: Eye, size: 32 }), /* @__PURE__ */ React.createElement(IconBtn, { icon: Pencil, size: 32, onClick: () => openEdit(p) }), /* @__PURE__ */ React.createElement(IconBtn, { icon: Trash2, tone: "danger", size: 32, onClick: () => setToDelete(p) })))
+    );
   })), /* @__PURE__ */ React.createElement(
     Modal,
     {
