@@ -136,6 +136,34 @@ const STATUS_TONE = {
   "\u062A\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644": { bg: C.successSoft, fg: C.success },
   "\u0645\u0644\u063A\u064A": { bg: C.dangerSoft, fg: C.danger }
 };
+function playLoudOrderAlert() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const totalDuration = 10;
+    const toneDuration = 0.35;
+    const gap = 0.15;
+    const cycle = (toneDuration + gap) * 2;
+    const cycles = Math.ceil(totalDuration / cycle);
+    let t = ctx.currentTime;
+    for (let i = 0; i < cycles; i++) {
+      [1046, 784].forEach((freq) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.value = freq;
+        osc.type = "square";
+        gain.gain.setValueAtTime(0.5, t);
+        gain.gain.exponentialRampToValueAtTime(1e-3, t + toneDuration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + toneDuration);
+        t += toneDuration + gap;
+      });
+    }
+    setTimeout(() => ctx.close(), (t + 0.3) * 1e3);
+  } catch (e) {
+  }
+}
 function GlobalStyle() {
   return /* @__PURE__ */ React.createElement("style", null, `
       * { box-sizing: border-box; }
@@ -272,12 +300,21 @@ function OrderCard({ order, onAdvance }) {
 function DriverHome({ driver, onLogout }) {
   const [orders, setOrders] = useState([]);
   const [tab, setTab] = useState("active");
+  const knownIdsRef = useRef(null);
   useEffect(() => {
     const database = getDb();
     if (!database) return;
     const unsub = database.collection("orders").where("driverId", "==", driver.id).onSnapshot((snap) => {
       const list = snap.docs.map((doc) => ({ ...doc.data(), docId: doc.id }));
       list.sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
+      const activeStatuses = list.filter((o) => o.status !== "\u062A\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644" && o.status !== "\u0645\u0644\u063A\u064A").map((o) => o.id);
+      if (knownIdsRef.current === null) {
+        knownIdsRef.current = new Set(activeStatuses);
+      } else {
+        const hasNew = activeStatuses.some((id) => !knownIdsRef.current.has(id));
+        if (hasNew) playLoudOrderAlert();
+        knownIdsRef.current = new Set(activeStatuses);
+      }
       setOrders(list);
     }, () => {
     });
